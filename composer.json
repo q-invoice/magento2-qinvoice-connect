@@ -1,0 +1,25 @@
+{
+  "name": "qnvc/magento-connect",
+  "description": "Magento 2 q-invoice connect",
+  "require": {
+  },
+  "type": "magento2-module",
+  "version": "2.1.1",
+  "license": [
+    "proprietary"
+  ],
+  "authors": [
+    {
+      "name": "Casper Mekel",
+      "email": "info@q-invoice.com"
+    }
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Qinvoice\\Connect\\": ""
+    }
+  }
+}
