@@ -259,7 +259,6 @@ class Connect
         if ($couponCode > '') {
             $oCoupon = $this->_couponFactory->create()->load($couponCode, 'code');
             $oRule = $this->_ruleFactory->create()->load($oCoupon->getRuleId());
-            var_dump($oRule->getData());
 
             $ruleData = $oRule->getData();
 
