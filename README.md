@@ -45,13 +45,13 @@ A label that will be attached to the invoice. It will not be visible for the rec
 A static string that will be added to the invoice remark if the order has been paid upfront. 
 
 * <b>Send invoice for placed orders</b>
-ALL Orders placed with one of the selected payment methods will be sent to q-invoice for further processing, regardless of the payment status. 
+ALL orders placed with one of the selected payment methods will be sent to q-invoice for further processing, regardless of the payment status. 
 
 * <b>Send invoice for paid orders</b>
 Orders with the selected payment methods will be sent to q-invoice ONLY when the payment has been SUCCESSFUL.
 
 * <b>Invoice action</b>
-Select an action to perform. Invoices can be saved as <b>draft</b> for later editing, <b>saved as PDF</b> or <b>send</b> to the shopper.
+Select an action to perform. Invoices can be saved as <b>draft</b> for later editing, <b>saved as PDF</b> or <b>sent</b> to the customer.
 
 * <b>Save relation</b>
 Lets q-invoice know whether or not to store the shoppers\' data for later use.
