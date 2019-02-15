@@ -10,6 +10,8 @@ use Magento\Framework\Event\ObserverInterface;
 
 class FrontInitBefore implements ObserverInterface
 {
+    protected $_call;
+
     public function __construct(
         \Qinvoice\Connect\Model\Call $call
     )

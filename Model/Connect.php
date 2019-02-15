@@ -73,12 +73,6 @@ class Connect
         // getting po_number
         $random_number = rand(0, pow(10, 7));
 
-        // GETTING API USERNAME
-        $username = $this->_scopeConfig->getValue('invoice_options/invoice/api_username', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-
-        // GETTING API PASSWORD
-        $password = $this->_scopeConfig->getValue('invoice_options/invoice/api_password', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-
         // GETTING LAYOUT CODE
         $layout_code = $this->_scopeConfig->getValue('invoice_options/invoice/layout_code', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
@@ -175,8 +169,8 @@ class Connect
             $_productId = $arrData[$i]['product_id'];
             $_product = $this->_productFactory->create()->load($_productId);
 
-            $category = $_product->getData('qinvoice_category');
-            $productcode = $_product->getData('qinvoice_productcode');
+//            $category = $_product->getData('qinvoice_category');
+//            $productcode = $_product->getData('qinvoice_productcode');
 
             $arrItemOptions = $arrData[$i]['product_options'];
 
@@ -214,8 +208,8 @@ class Connect
 
 
             $params = array(
-                'code' => $productcode,
-                'description' => "[" . $arrData[$i]['sku'] . "] " . trim($arrData[$i]['name']) . $varDescription,
+                'code' => $arrData[$i]['sku'],
+                'description' => trim($arrData[$i]['name']) . $varDescription,
                 'price' => $arrData[$i]['base_price'] * 100,
                 //'price_incl' => ((($arrData[$i]['base_price']*$arrData[$i]['qty_ordered'])+$arrData[$i]['tax_amount'])/$arrData[$i]['qty_ordered'])*100,
                 'price_incl' => round(((($arrData[$i]['base_price'] * $arrData[$i]['qty_ordered']) + $arrData[$i]['tax_amount']) / $arrData[$i]['qty_ordered']) * 100),
@@ -303,7 +297,7 @@ class Connect
 
         $result = $invoice->sendRequest();
 
-        if ($result != 1) {
+        if (!is_int($result)) {
             $this->notify_admin('Qinvoice Connect Error', 'Could not send invoice for order ' . $order_id);
         }
 

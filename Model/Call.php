@@ -14,7 +14,7 @@ class Call
 
     private $code;
     private $message;
-    private $version = '2.1.1';
+    private $version = '2.1.2';
 
 
     public function __construct
@@ -251,40 +251,26 @@ class Call
 
     }
 
-    public function sendOnComplete($order)
-    {
-        return false;
-
-        // GETTING TRIGGER SETTING
-        $invoice_trigger = Mage::getStoreConfig('invoice_options/invoice/invoice_trigger');
-
-        if ($invoice_trigger == 'complete' && $order->getState() == \Magento\Sales\Model\Order::STATE_COMPLETE) {
-            $this->_connect->createInvoiceForQinvoice($order, false);
-        } else {
-            return true;
-        }
-    }
-
-
-    public function sendOnOrder($order)
+    public function sendOnOrderPlace($order)
     {
         // GETTING TRIGGER SETTING
-        $invoice_trigger = $this->_scopeConfig->getValue('invoice_options/invoice/invoice_trigger', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $order_triggers = explode(",",$this->_scopeConfig->getValue('invoice_options/invoice/invoice_trigger_payment', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
+        $payment = $order->getPayment();
 
-        if ($invoice_trigger == 'order') {
+        if (in_array($payment->getMethod(), $order_triggers)) {
+            die('found!');
             $this->_connect->createInvoiceForQinvoice($order, false);
         }
 
     }
 
-    public function sendOnPayment($order)
+    public function sendOnOrderPay($order)
     {
-        // Gets called even when other payment method is choosen.
-
         // GETTING TRIGGER SETTING
-        $invoice_trigger = $this->_scopeConfig->getValue('invoice_options/invoice/invoice_trigger', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $invoice_triggers = explode(",",$this->_scopeConfig->getValue('invoice_options/invoice/invoice_trigger_payment', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
+        $payment = $order->getPayment();
 
-        if ($invoice_trigger == 'payment') {
+        if (in_array($payment->getMethod(), $invoice_triggers)) {
             $this->_connect->createInvoiceForQinvoice($order, true);
         }
 
@@ -292,13 +278,6 @@ class Call
 
     public function orderStatusChange($order)
     {
-
-        $invoice_trigger = $this->_scopeConfig->getValue('invoice_options/invoice/invoice_trigger', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-
-        // exit();
-        if ($order->getState() == \Magento\Sales\Model\Order::STATE_COMPLETE && $invoice_trigger == 'complete') {
-            $this->_connect->createInvoiceForQinvoice($order, false);
-        }
-
+        // currently not in use
     }
 }

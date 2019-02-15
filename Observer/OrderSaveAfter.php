@@ -10,6 +10,8 @@ use Magento\Framework\Event\ObserverInterface;
 
 class OrderSaveAfter implements ObserverInterface
 {
+    protected $_call;
+
     public function __construct(
         \Qinvoice\Connect\Model\Call $call
     )
@@ -20,8 +22,9 @@ class OrderSaveAfter implements ObserverInterface
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        $order = $observer->getOrder();
-        $this->_call->orderStatusChange($order);
+        // for future use
+        //$order = $observer->getOrder();
+        //$this->_call->orderStatusChange($order);
     }
 
 }

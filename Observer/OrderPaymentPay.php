@@ -14,6 +14,7 @@ class OrderPaymentPay implements ObserverInterface
     protected $_productFactory;
     protected $_storeManager;
     protected $_scopeConfig;
+    protected $_call;
 
     public function __construct(
         \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $collectionFactory,
@@ -34,7 +35,7 @@ class OrderPaymentPay implements ObserverInterface
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
         $order = $observer->getOrder();
-        $this->_call->sendOnPayment($order);
+        $this->_call->sendOnOrderPay($order);
     }
 
 }

@@ -5,7 +5,7 @@
             <label>Qinvoice Connect</label>
         </tab>
         <section id="invoice_options" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
-            <label>Qinvoice Configuration</label>
+            <label>API Configuration</label>
             <tab>qinvoice</tab>
             <resource>Qinvoice_Connect::config</resource>
             <group id="invoice" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -34,37 +34,42 @@
                 </field>
                 <field id="paid_remark" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Paid remark</label>
-                    <comment><![CDATA[e.g. Your payment has been received.]]></comment>                    
+                    <comment><![CDATA[Supplements the document remark. e.g. Your payment has been received.]]></comment>
                 </field>
-                <field id="invoice_trigger" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Send invoice request on</label>
-                    <source_model>\Qinvoice\Connect\Model\Config\Source\Trigger</source_model>
-                    <comment><![CDATA[Select invoice trigger moment]]></comment>                
+                <field id="invoice_trigger_order" translate="label" type="multiselect" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Send invoice for placed orders</label>
+                    <source_model>\Qinvoice\Connect\Model\Config\Source\PaymentMethod</source_model>
+                    <comment><![CDATA[An invoice will be created when an order is received with selected payment methods. REGARDLESS of payment status.]]></comment>
                 </field>
-                <field id="invoice_action" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="invoice_trigger_payment" translate="label" type="multiselect" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Send invoice for paid orders</label>
+                    <source_model>\Qinvoice\Connect\Model\Config\Source\PaymentMethod</source_model>
+                    <comment><![CDATA[An invoice will be created when a SUCCESSFUL payment is received for orders with selected payment methods.]]></comment>
+                </field>
+                <field id="invoice_action" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>After request</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\Invoice</source_model>
                     <comment><![CDATA[Create invoice and send to customer?]]></comment>
                 </field>
-                <field id="save_relation" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="save_relation" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Save customer details</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\Relation</source_model>
                     <comment><![CDATA[Save customer details to address book?]]></comment>        
                 </field>
-                <field id="calculation_method" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="calculation_method" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Calculation method</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\Method</source_model>
                     <comment><![CDATA[Select leading price type]]></comment>                  
                 </field>
-                <field id="product_attributes" translate="label" type="multiselect" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="product_attributes" translate="label" type="multiselect" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Products attributes</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\Attribute</source_model>
                     <comment><![CDATA[Select one or more attributes to show on product line]]></comment>
                 </field>
-                <field id="webshop_secret" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="webshop_secret" translate="label" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Webshop secret</label>
                     <frontend_model>Qinvoice\Connect\Block\System\Config\Form\Field\Webshopsecret</frontend_model> 
-                    <comment><![CDATA[Your secret key. Used for stock synchronisation.]]></comment>
+                    <comment><![CDATA[Your secret key. Used for inventory synchronisation.]]></comment>
                 </field>
             </group>
         </section>
