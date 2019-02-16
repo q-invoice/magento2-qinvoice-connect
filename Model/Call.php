@@ -16,6 +16,7 @@ class Call
     private $message;
     private $version = '2.1.2';
 
+    protected  $_logger;
 
     public function __construct
     (
@@ -27,7 +28,8 @@ class Call
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\CatalogInventory\Model\Stock\StockItemRepository $stockItemRepository,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
-        \Magento\Tax\Model\Calculation $calculation
+        \Magento\Tax\Model\Calculation $calculation,
+        \Psr\Log\LoggerInterface $logger
     )
     {
         $this->_scopeConfig = $scopeInterface;
@@ -39,6 +41,7 @@ class Call
         $this->_stockItemRepository = $stockItemRepository;
         $this->_productCollectionFactory = $productCollectionFactory;
         $this->_calculation = $calculation;
+        $this->_logger = $logger;
     }
 
     public function qinvoiceCall()
@@ -254,7 +257,7 @@ class Call
     public function sendOnOrderPlace($order)
     {
         // GETTING TRIGGER SETTING
-        $order_triggers = explode(",",$this->_scopeConfig->getValue('invoice_options/invoice/invoice_trigger_payment', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
+        $order_triggers = explode(",",$this->_scopeConfig->getValue('invoice_options/invoice/invoice_trigger_order', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
         $payment = $order->getPayment();
 
         if (in_array($payment->getMethod(), $order_triggers)) {
@@ -266,15 +269,16 @@ class Call
     {
         // GETTING TRIGGER SETTING
         $invoice_triggers = explode(",",$this->_scopeConfig->getValue('invoice_options/invoice/invoice_trigger_payment', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
+
         $payment = $order->getPayment();
 
         if (in_array($payment->getMethod(), $invoice_triggers)) {
-            $this->_connect->createInvoiceForQinvoice($order, true);
+           $this->_connect->createInvoiceForQinvoice($order, true);
         }
     }
 
     public function orderStatusChange($order)
     {
-        // currently not in use
+
     }
 }

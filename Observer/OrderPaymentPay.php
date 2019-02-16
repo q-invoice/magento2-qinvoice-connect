@@ -34,7 +34,7 @@ class OrderPaymentPay implements ObserverInterface
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        $order = $observer->getOrder();
+        $order = $observer->getPayment()->getOrder();
         $this->_call->sendOnOrderPay($order);
     }
 

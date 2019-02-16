@@ -4,6 +4,7 @@
  * Copyright ©q-invoice B.V.. All rights reserved.
  */
 
+
 namespace Qinvoice\Connect\Model;
 
 class Connect
@@ -35,32 +36,32 @@ class Connect
         $this->_message = $message;
     }
 
-    public function createInvoiceForQinvoice($order, $ifPaid = false)
+    public function createInvoiceForQinvoice($order, $hasToBePaid = false)
     {
+        $invoice = $this->_qinvoice;
 
+        $paid_remark = '';
         $paid = 0;
         $arrData = [];
-        $varCurrenyCode = $this->_storeManager->getStore()->getCurrentCurrency()->getCode();
+        // $varCurrenyCode = $this->_storeManager->getStore()->getCurrentCurrency()->getCode();
         // GETTING ORDER STATUS
-        $rowOne = $order;
 
-        if ($rowOne['status'] == 'processing' || $rowOne['status'] == 'complete' || $rowOne['total_paid'] == $rowOne['grand_total']) {
-            $varStatus = 'Paid';
+
+        if ($order->getGrandTotal() == $order->getTotalPaid()) {
             // GETTING API URL
             $paid_remark = $this->_scopeConfig->getValue('invoice_options/invoice/paid_remark', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-            $paid = 1;
+            $invoice->paid = 1;
         } else {
-            if ($ifPaid == true) {
+            if ($hasToBePaid == true) {
                 // cancel if invoice has to be paid
-                return;
+                //return true;
             }
-            $paid_remark = '';
-            $varStatus = 'Sent';
         }
 
         foreach ($order->getAllVisibleItems() as $row) {
-            if ($row->getParentItemId())
+            if ($row->getParentItemId()) {
                 continue;
+            }
 
             $arrData[] = $row->getData();
         }
@@ -68,49 +69,50 @@ class Connect
         if (!$arrData) {
             //return false;
         }
-        //$comment = '';
-        //$comment = $data['comment_text'];
-        // getting po_number
-        $random_number = rand(0, pow(10, 7));
+
 
         // GETTING LAYOUT CODE
         $layout_code = $this->_scopeConfig->getValue('invoice_options/invoice/layout_code', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
         $rowThree = $order->getBillingAddress()->getData();
 
-        $invoice = $this->_qinvoice;
+
+        $invoice->payment_method = $order->getPayment()->getMethod();
 
         $invoice->companyname = $rowThree['company'];       // Your customers company name
         $invoice->firstname = $rowThree['firstname'];       // Your customers contact name
         $invoice->lastname = $rowThree['lastname'];       // Your customers contact name
-        $invoice->email = $rowOne['customer_email'];                // Your customers emailaddress (invoice will be sent here)
+        $invoice->email = $order->getCustomerEmail();                // Your customers emailaddress (invoice will be sent here)
         $invoice->phone = $rowThree['telephone'];
         $invoice->address = $rowThree['street'];                // Self-explanatory
         $invoice->zipcode = $rowThree['postcode'];              // Self-explanatory
         $invoice->city = $rowThree['city'];                     // Self-explanatory
         $invoice->country = $rowThree['country_id'];                 // 2 character country code: NL for Netherlands, DE for Germany etc
-        $invoice->vatnumber = strlen($rowThree['vat_id']) > 3 ? $rowThree['vat_id'] : $rowOne['customer_taxvat'];
+        $invoice->vatnumber = $order->getBillingAddress()->getVatId();
 
-        $rowFour = $order->getShippingAddress()->getData();
+        if (is_object($order->getShippingAddress())) { // returns null when no address is specified
+            $rowFour = $order->getShippingAddress()->getData();
 
-        $invoice->delivery_companyname = $rowFour['company'];       // Your customers company name
-        $invoice->delivery_firstname = $rowFour['firstname'];       // Your customers contact name
-        $invoice->delivery_lastname = $rowFour['lastname'];       // Your customers contact name
-        $invoice->delivery_address = $rowFour['street'];                // Self-explanatory
-        $invoice->delivery_zipcode = $rowFour['postcode'];              // Self-explanatory
-        $invoice->delivery_city = $rowFour['city'];                     // Self-explanatory
-        $invoice->delivery_country = $rowFour['country_id'];
+            $invoice->delivery_companyname = $rowFour['company'];       // Your customers company name
+            $invoice->delivery_firstname = $rowFour['firstname'];       // Your customers contact name
+            $invoice->delivery_lastname = $rowFour['lastname'];       // Your customers contact name
+            $invoice->delivery_address = $rowFour['street'];                // Self-explanatory
+            $invoice->delivery_zipcode = $rowFour['postcode'];              // Self-explanatory
+            $invoice->delivery_city = $rowFour['city'];                     // Self-explanatory
+            $invoice->delivery_country = $rowFour['country_id'];
+            $invoice->delivery_email = $order->getCustomerEmail();                // Your customers emailaddress (invoice will be sent here)
+            $invoice->delivery_phone = $order->getShippingAddress()->getTelephone();
+        }
 
         $invoice->vat = '';                     // Self-explanatory
-        $invoice->paid = $paid;
 
         $save_relation = $this->_scopeConfig->getValue('invoice_options/invoice/save_relation', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $invoice->saverelation = $save_relation;
 
         $invoice_remark = $this->_scopeConfig->getValue('invoice_options/invoice/invoice_remark', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        $order_id = $rowOne['increment_id'];
-        $invoice_remark = str_replace('{order_id}', $rowOne['increment_id'], $invoice_remark);
-        $invoice_remark = str_replace('{shipping_description}', $rowOne['shipping_description'], $invoice_remark);
+
+        $invoice_remark = str_replace('{order_id}', $order->getIncrementId(), $invoice_remark);
+        //$invoice_remark = str_replace('{shipping_description}', $rowOne['shipping_description'], $invoice_remark);
 
         $invoice->remark = $invoice_remark . "\n" . $paid_remark;
 
@@ -142,13 +144,10 @@ class Connect
 
 
         // OPTIONAL: Add tags
-        $invoice->addTag($rowOne['increment_id']);
+        $invoice->addTag($order->getIncrementId());
         $invoice->addTag($invoice_tag);
         //  $invoice->addTag('send: '. $send_mail);
         //  $invoice->addTag('paid: '. $paid .' '. $rowOne['total_paid']);
-
-        $store_id = $order->getStoreId();
-
 
         $attributes = $this->_product->getAttributes();
         $attributeArray = array();
@@ -162,7 +161,6 @@ class Connect
         }
 
 
-        //print_r($order);
 
         for ($i = 0; $i < count($arrData); $i++) {
             $category = '';
@@ -176,7 +174,6 @@ class Connect
 
             $varDescription = '';
 
-            //print_r();
 
             $product_attributes = explode(",", $pa_array);
             foreach ($product_attributes as $pa) {
@@ -217,24 +214,24 @@ class Connect
                 'vatpercentage' => trim(number_format($arrData[$i]['tax_percent'], 2, '.', '')) * 100,
                 'discount' => 0,
                 'quantity' => $arrData[$i]['qty_ordered'] * 100,
-                'categories' => $category
+                'categories' => $category,
             );
 
             $invoice->addItem($params);
 
         }
 
-        if ($rowOne['shipping_amount'] > 0) {
+        if ($order->getShippingAmount() > 0) {
             $params = array(
                 'code' => 'SHPMNT',
-                'description' => trim($rowOne['shipping_description']),
-                'price' => $rowOne['shipping_amount'] * 100,
-                'price_incl' => $rowOne['shipping_incl_tax'] * 100,
-                'price_vat' => $rowOne['shipping_tax_amount'] * 100,
-                'vatpercentage' => round(($rowOne['shipping_tax_amount'] / $rowOne['shipping_amount']) * 100) * 100,
+                'description' => trim($order->getShippingDescription()),
+                'price' => $order->getShippingAmount() * 100,
+                'price_incl' => $order->getShippingInclTax() * 100,
+                'price_vat' => $order->getShippingTaxAmount() * 100,
+                'vatpercentage' => round(($order->getShippingTaxAmount() / $order->getShippingAmount()) * 100) * 100,
                 'discount' => 0,
                 'quantity' => 100,
-                'categories' => 'shipping'
+                'categories' => 'shipping',
             );
 
             $invoice->addItem($params);
@@ -245,7 +242,7 @@ class Connect
 
         // $orderDetails = $order->getData();
 
-        $couponCode = $rowOne['coupon_code'];
+        $couponCode = $order->getCouponCode();
         //echo $couponCode;
         //print_r($order);
         // $couponCode = $orderDetails['coupon_code'];
@@ -260,13 +257,13 @@ class Connect
             $params = array(
                 'code' => 'DSCNT',
                 'description' => $couponCode,
-                'price' => ($rowOne['base_subtotal'] * ($discount / 100)) * 100,
-                'price_incl' => ($rowOne['base_subtotal'] * ($discount / 100)) * 100,
+                'price' => $order->getDiscountAmount() * 100,
+                'price_incl' => $order->getDiscountAmount() * 100,
                 'price_vat' => 0,
                 'vatpercentage' => 0,
                 'discount' => 0,
                 'quantity' => -100,
-                'categories' => 'discount'
+                'categories' => 'discount',
             );
 
             $invoice->addItem($params);
@@ -295,10 +292,11 @@ class Connect
 
         // }
 
+
         $result = $invoice->sendRequest();
 
-        if (!is_int($result)) {
-            $this->notify_admin('Qinvoice Connect Error', 'Could not send invoice for order ' . $order_id);
+        if (!is_numeric($result)) {
+            $this->notify_admin('Qinvoice Connect Error', 'Could not send invoice for order ' . $order->getIncrementId());
         }
 
         return true;

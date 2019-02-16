@@ -21,6 +21,8 @@ class Qinvoice
     public $zipcode;
     public $city;
     public $country;
+    public $phone;
+    public $calculation_method = 'excl';
     public $delivery_companyname;
     public $delivery_firstname;
     public $delivery_lastname;
@@ -28,9 +30,12 @@ class Qinvoice
     public $delivery_zipcode;
     public $delivery_city;
     public $delivery_country;
+    public $delivery_phone;
+    public $delivery_email;
     public $vatnumber;
     public $remark;
-    public $paid;
+    public $paid = 0;
+    public $payment_method;
     public $action;
     public $saverelation = false;
 
@@ -45,13 +50,12 @@ class Qinvoice
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeInterface
     )
     {
-        $this->_scopeConfig = $scopeInterface;
 
-        $this->username = $this->_scopeConfig->getValue('invoice_options/invoice/api_username', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        $this->password = $this->_scopeConfig->getValue('invoice_options/invoice/api_password', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $this->username = $scopeInterface->getValue('invoice_options/invoice/api_username', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $this->password = $scopeInterface->getValue('invoice_options/invoice/api_password', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $this->recurring = 'none';
 
-        $apiURL = $this->_scopeConfig->getValue('invoice_options/invoice/api_url', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $apiURL = $scopeInterface->getValue('invoice_options/invoice/api_url', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         // GETTING API URL
         $this->gateway = $apiURL;
     }
@@ -110,12 +114,7 @@ class Qinvoice
         } else {
             curl_close($ch);
         }
-        if ($data == 1) {
-            return true;
-        } else {
-            return false;
-        }
-
+        return $data;
     }
 
     private function buildXML()
@@ -149,7 +148,7 @@ class Qinvoice
                             <recurring><![CDATA[' . $this->recurring . ']]></recurring>
                             <remark><![CDATA[' . $this->remark . ']]></remark>
                             <layout><![CDATA[' . $this->layout . ']]></layout>
-                            <paid><![CDATA[' . $this->paid . ']]></paid>
+                            <paid method="'. $this->payment_method .'"><![CDATA[' . $this->paid . ']]></paid>
                             <action><![CDATA[' . $this->action . ']]></action>
                             <saverelation><![CDATA[' . $this->saverelation . ']]></saverelation>
                             <calculation_method><![CDATA[' . $this->calculation_method . ']]></calculation_method>
