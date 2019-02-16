@@ -258,10 +258,8 @@ class Call
         $payment = $order->getPayment();
 
         if (in_array($payment->getMethod(), $order_triggers)) {
-            die('found!');
             $this->_connect->createInvoiceForQinvoice($order, false);
         }
-
     }
 
     public function sendOnOrderPay($order)
@@ -273,7 +271,6 @@ class Call
         if (in_array($payment->getMethod(), $invoice_triggers)) {
             $this->_connect->createInvoiceForQinvoice($order, true);
         }
-
     }
 
     public function orderStatusChange($order)
