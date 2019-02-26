@@ -13,6 +13,7 @@ class Qinvoice
     private $username;
     private $password;
 
+    public $reference;
     public $companyname;
     public $firstname;
     public $lastname;
@@ -36,6 +37,7 @@ class Qinvoice
     public $remark;
     public $paid = 0;
     public $payment_method;
+    public $payment_method_label;
     public $action;
     public $saverelation = false;
 
@@ -123,9 +125,10 @@ class Qinvoice
                         <login mode="newInvoice">
                             <username><![CDATA[' . $this->username . ']]></username>
                             <password><![CDATA[' . $this->password . ']]></password>
-                            <identifier><![CDATA[Magento_2.1.3]]></identifier>
+                            <identifier><![CDATA[Magento_2.2.1]]></identifier>
                         </login>
                         <invoice>
+                            <reference><![CDATA[' . $this->reference . ']]></reference>
                             <companyname><![CDATA[' . $this->companyname . ']]></companyname>
                             <firstname><![CDATA[' . $this->firstname . ']]></firstname>
                             <lastname><![CDATA[' . $this->lastname . ']]></lastname>
@@ -148,7 +151,7 @@ class Qinvoice
                             <recurring><![CDATA[' . $this->recurring . ']]></recurring>
                             <remark><![CDATA[' . $this->remark . ']]></remark>
                             <layout><![CDATA[' . $this->layout . ']]></layout>
-                            <paid method="'. $this->payment_method .'"><![CDATA[' . $this->paid . ']]></paid>
+                            <paid method="'. $this->payment_method .'" label='. $this->payment_method_label .'"><![CDATA[' . $this->paid . ']]></paid>
                             <action><![CDATA[' . $this->action . ']]></action>
                             <saverelation><![CDATA[' . $this->saverelation . ']]></saverelation>
                             <calculation_method><![CDATA[' . $this->calculation_method . ']]></calculation_method>

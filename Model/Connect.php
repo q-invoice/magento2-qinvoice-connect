@@ -36,26 +36,21 @@ class Connect
         $this->_message = $message;
     }
 
-    public function createInvoiceForQinvoice($order, $hasToBePaid = false)
+    public function createInvoiceForQinvoice($order, $isPaid = false)
     {
         $invoice = $this->_qinvoice;
 
         $paid_remark = '';
-        $paid = 0;
+
         $arrData = [];
         // $varCurrenyCode = $this->_storeManager->getStore()->getCurrentCurrency()->getCode();
         // GETTING ORDER STATUS
 
 
-        if ($order->getGrandTotal() == $order->getTotalPaid()) {
+        if ($isPaid) {
             // GETTING API URL
             $paid_remark = $this->_scopeConfig->getValue('invoice_options/invoice/paid_remark', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
             $invoice->paid = 1;
-        } else {
-            if ($hasToBePaid == true) {
-                // cancel if invoice has to be paid
-                //return true;
-            }
         }
 
         foreach ($order->getAllVisibleItems() as $row) {
@@ -76,8 +71,11 @@ class Connect
 
         $rowThree = $order->getBillingAddress()->getData();
 
+        $payment = $order->getPayment();
+        $payment_method = $payment->getMethodInstance();
 
-        $invoice->payment_method = $order->getPayment()->getMethod();
+        $invoice->payment_method = $payment->getMethod();
+        $invoice->payment_method_label = $payment_method->getTitle();
 
         $invoice->companyname = $rowThree['company'];       // Your customers company name
         $invoice->firstname = $rowThree['firstname'];       // Your customers contact name
@@ -144,6 +142,7 @@ class Connect
 
 
         // OPTIONAL: Add tags
+        $invoice->reference = $order->getIncrementId();
         $invoice->addTag($order->getIncrementId());
         $invoice->addTag($invoice_tag);
         //  $invoice->addTag('send: '. $send_mail);
@@ -159,7 +158,6 @@ class Connect
             //     'value' => $attribute->getData('attribute_code')
             // );
         }
-
 
 
         for ($i = 0; $i < count($arrData); $i++) {

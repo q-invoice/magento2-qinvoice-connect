@@ -6,7 +6,7 @@
    <event name="sales_order_save_after">
        <observer name="qinvoice_order_save_event" instance="Qinvoice\Connect\Observer\OrderSaveAfter" shared="true" />
    </event>
-   <event name="sales_order_payment_pay">
-       <observer name="qinvoice_order_pay_event" instance="Qinvoice\Connect\Observer\OrderPaymentPay" shared="true" />
+   <event name="sales_order_invoice_pay">
+       <observer name="qinvoice_invoice_pay_event" instance="Qinvoice\Connect\Observer\OrderInvoicePay" shared="true" />
    </event>
 </config>

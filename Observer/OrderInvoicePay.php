@@ -8,7 +8,7 @@ namespace Qinvoice\Connect\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
 
-class OrderPaymentPay implements ObserverInterface
+class OrderInvoicePay implements ObserverInterface
 {
     protected $_collectionFactory;
     protected $_productFactory;
@@ -34,7 +34,9 @@ class OrderPaymentPay implements ObserverInterface
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        $order = $observer->getPayment()->getOrder();
+        $invoice = $observer->getEvent()->getInvoice();
+        $order = $invoice->getOrder();
+
         $this->_call->sendOnOrderPay($order);
     }
 
