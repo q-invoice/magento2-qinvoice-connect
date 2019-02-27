@@ -151,7 +151,7 @@ class Qinvoice
                             <recurring><![CDATA[' . $this->recurring . ']]></recurring>
                             <remark><![CDATA[' . $this->remark . ']]></remark>
                             <layout><![CDATA[' . $this->layout . ']]></layout>
-                            <paid method="'. $this->payment_method .'" label='. $this->payment_method_label .'"><![CDATA[' . $this->paid . ']]></paid>
+                            <paid method="'. $this->payment_method .'" label="'. $this->payment_method_label .'"><![CDATA[' . $this->paid . ']]></paid>
                             <action><![CDATA[' . $this->action . ']]></action>
                             <saverelation><![CDATA[' . $this->saverelation . ']]></saverelation>
                             <calculation_method><![CDATA[' . $this->calculation_method . ']]></calculation_method>
