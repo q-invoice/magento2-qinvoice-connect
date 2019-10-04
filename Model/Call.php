@@ -16,7 +16,7 @@ class Call
     private $message;
     private $version = '2.2.2';
 
-    protected  $_logger;
+    protected $_logger;
 
     public function __construct
     (
@@ -28,6 +28,7 @@ class Call
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\CatalogInventory\Model\Stock\StockItemRepository $stockItemRepository,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
+        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
         \Magento\Tax\Model\Calculation $calculation,
         \Psr\Log\LoggerInterface $logger
     )
@@ -38,8 +39,9 @@ class Call
         $this->_product = $product;
         $this->_productFactory = $productFactory;
         $this->_connect = $connect;
-        $this->_stockItemRepository = $stockItemRepository;
+        $this->_stockRegistry = $stockRegistry;
         $this->_productCollectionFactory = $productCollectionFactory;
+        $this->_stockItemRepository = $stockItemRepository;
         $this->_calculation = $calculation;
         $this->_logger = $logger;
     }
@@ -105,9 +107,9 @@ class Call
                     array(
                         'version' => $this->version,
                         'code' => $this->code,
-                        'message' => $this->message
+                        'message' => $this->message,
                     ),
-                'data' => $data
+                'data' => $data,
             )
         );
         exit();
@@ -115,7 +117,6 @@ class Call
 
     public function updateStock($sku = '', $quantity = '')
     {
-
 
 
         if ($sku == '') {
@@ -132,30 +133,30 @@ class Call
 
         $this->checkSignature(array("stock", $sku, $quantity));
 
-        $_product = $this->_productFactory->create();
-        $_product->load($_product->getIdBySku($sku));
 
-        if (!$_product->getId() > 0) {
-            $this->code = '110';
-            $this->message = 'Product not found';
+        try {
+            $stockItem = $this->_stockRegistry->getStockItemBySku($sku);
+        } catch (\Exception $e) {
+            $this->code = '102';
+            $this->message = $e->getMessage();
             $this->renderJson();
         }
 
-        $stock = $this->_stockItemRepository->get($_product->getId());
-
-        if ($stock->getId() > 0 and $stock->getManageStock()) {
-            $stock->setQty($quantity);
-            $stock->setIsInStock((int)($quantity > 0));
-            if (!$stock->save()) {
-                $this->code = '120';
-                $this->message = 'Error while updating';
-                $this->renderJson();
-            } else {
-                $this->code = '900';
-                $this->message = 'Product updated successfully';
-                $this->renderJson();
-            }
+        $stockItem->setQty($quantity);
+        $stockItem->setIsInStock((bool)$quantity); // this line
+        try {
+            $this->_stockRegistry->updateStockItemBySku($sku, $stockItem);
+        } catch (\Exception $e) {
+            $this->code = '199';
+            $this->message = $e->getMessage();
+            $this->renderJson();
         }
+
+
+        $this->code = '900';
+        $this->message = 'Product updated successfully';
+        $this->renderJson();
+
 
     }
 
@@ -205,9 +206,10 @@ class Call
                 $this->renderJson();
             }
             $products->setStoreId($store_id);
-        }else{
+        } else {
             $store = $this->_storeManager->getStore('default');
         }
+
 
         //Magento does not load all attributes by default
         //Add as many as you like
@@ -242,7 +244,7 @@ class Call
                 'stock' => $stock->getQty(),
                 'min_stock' => $stock->getMinQty(),
                 'vat' => $vat_percent * 100,
-                'tier_prices' => $tp_array
+                'tier_prices' => $tp_array,
             );
         }
 
@@ -257,7 +259,7 @@ class Call
     public function sendOnOrderPlace($order)
     {
         // GETTING TRIGGER SETTING
-        $order_triggers = explode(",",$this->_scopeConfig->getValue('invoice_options/invoice/invoice_trigger_order', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
+        $order_triggers = explode(",", $this->_scopeConfig->getValue('invoice_options/invoice/invoice_trigger_order', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
         $payment = $order->getPayment();
 
         if (in_array($payment->getMethod(), $order_triggers)) {
@@ -268,12 +270,12 @@ class Call
     public function sendOnOrderPay($order)
     {
         // GETTING TRIGGER SETTING
-        $invoice_triggers = explode(",",$this->_scopeConfig->getValue('invoice_options/invoice/invoice_trigger_payment', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
+        $invoice_triggers = explode(",", $this->_scopeConfig->getValue('invoice_options/invoice/invoice_trigger_payment', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
 
         $payment = $order->getPayment();
 
         if (in_array($payment->getMethod(), $invoice_triggers)) {
-           $this->_connect->createInvoiceForQinvoice($order, true);
+            $this->_connect->createInvoiceForQinvoice($order, true);
         }
     }
 
