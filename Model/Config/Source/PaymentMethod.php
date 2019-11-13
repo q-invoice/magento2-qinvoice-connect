@@ -6,29 +6,48 @@
 
 namespace Qinvoice\Connect\Model\Config\Source;
 
-class PaymentMethod implements \Magento\Framework\Option\ArrayInterface
+
+use \Magento\Framework\App\Config\ScopeConfigInterface;
+use \Magento\Payment\Model\Config;
+
+class Paymentmethod extends \Magento\Framework\DataObject
+    implements \Magento\Framework\Option\ArrayInterface
 {
-    protected $paymentHelper;
+    /**
+     * @var ScopeConfigInterface
+     */
+    protected $_appConfigScopeConfigInterface;
+    /**
+     * @var Config
+     */
+    protected $_paymentModelConfig;
 
     /**
-     * @param \Magento\Payment\Helper\Data $paymentHelper
+     * @param ScopeConfigInterface $appConfigScopeConfigInterface
+     * @param Config $paymentModelConfig
      */
     public function __construct(
-        \Magento\Payment\Helper\Data $paymentHelper
+        ScopeConfigInterface $appConfigScopeConfigInterface,
+        Config $paymentModelConfig
     )
     {
-        $this->paymentHelper = $paymentHelper;
-    }
 
+        $this->_appConfigScopeConfigInterface = $appConfigScopeConfigInterface;
+        $this->_paymentModelConfig = $paymentModelConfig;
+    }
 
     public function toOptionArray()
     {
-        $methods = $this->paymentHelper->getPaymentMethodList();
-        $methodsArray = [];
-
-        foreach ($methods as $code => $title) {
-            $methodsArray[] = ['value' => $code, 'label' => $title];
+        $payments = $this->_paymentModelConfig->getActiveMethods();
+        $methods = array();
+        foreach ($payments as $paymentCode => $paymentModel) {
+            $paymentTitle = $this->_appConfigScopeConfigInterface
+                ->getValue('payment/' . $paymentCode . '/title');
+            $methods[$paymentCode] = array(
+                'label' => $paymentTitle,
+                'value' => $paymentCode,
+            );
         }
-        return $methodsArray;
+        return $methods;
     }
 }
