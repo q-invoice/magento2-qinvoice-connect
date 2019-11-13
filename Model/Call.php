@@ -14,7 +14,7 @@ class Call
 
     private $code;
     private $message;
-    private $version = '2.2.3';
+    private $version = '2.2.4';
 
     protected $_logger;
 
