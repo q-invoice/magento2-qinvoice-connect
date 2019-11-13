@@ -33,6 +33,10 @@ class Qinvoice
     public $delivery_country;
     public $delivery_phone;
     public $delivery_email;
+
+    public $delivery_date;
+    public $date;
+
     public $vatnumber;
     public $remark;
     public $paid = 0;
@@ -128,6 +132,7 @@ class Qinvoice
                             <identifier><![CDATA[Magento_2.2.1]]></identifier>
                         </login>
                         <invoice>
+                            <date><![CDATA[' . $this->date . ']]></date>
                             <reference><![CDATA[' . $this->reference . ']]></reference>
                             <companyname><![CDATA[' . $this->companyname . ']]></companyname>
                             <firstname><![CDATA[' . $this->firstname . ']]></firstname>
@@ -139,6 +144,7 @@ class Qinvoice
                             <city><![CDATA[' . $this->city . ']]></city>
                             <country><![CDATA[' . $this->country . ']]></country>
 
+                            <date><![CDATA[' . $this->date . ']]></date>
                             <delivery_companyname><![CDATA[' . $this->delivery_companyname . ']]></delivery_companyname>
                             <delivery_firstname><![CDATA[' . $this->delivery_firstname . ']]></delivery_firstname>
                             <delivery_lastname><![CDATA[' . $this->delivery_lastname . ']]></delivery_lastname>
