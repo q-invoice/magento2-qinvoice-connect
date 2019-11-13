@@ -28,8 +28,8 @@ class Call
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\CatalogInventory\Model\Stock\StockItemRepository $stockItemRepository,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
-        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
         \Magento\Tax\Model\Calculation $calculation,
+        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
         \Psr\Log\LoggerInterface $logger
     )
     {
@@ -41,8 +41,8 @@ class Call
         $this->_connect = $connect;
         $this->_stockRegistry = $stockRegistry;
         $this->_productCollectionFactory = $productCollectionFactory;
-        $this->_stockItemRepository = $stockItemRepository;
         $this->_calculation = $calculation;
+        $this->_stockItemRepository = $stockItemRepository;
         $this->_logger = $logger;
     }
 
@@ -232,7 +232,12 @@ class Call
             }
 
 
-            $stock = $this->_stockItemRepository->get($product->getId());
+            try {
+                $stock = $this->_stockItemRepository->get($product->getId());
+            }catch (\Exception $e){
+                $stock = false;
+            }
+
             $products_array[] = array(
                 'entity_id' => $product['entity_id'],
                 'sku' => $product['sku'],
@@ -241,8 +246,8 @@ class Call
                 'weight' => $product['weight'],
                 'thumbnail' => $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . $product['thumbnail'],
                 'special_price' => $product['special_price'],
-                'stock' => $stock->getQty(),
-                'min_stock' => $stock->getMinQty(),
+                'stock' => !$stock ? 0 : $stock->getQty(),
+                'min_stock' => !$stock ? 0 : $stock->getMinQty(),
                 'vat' => $vat_percent * 100,
                 'tier_prices' => $tp_array,
             );
