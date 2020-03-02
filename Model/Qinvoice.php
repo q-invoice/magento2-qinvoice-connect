@@ -12,6 +12,7 @@ class Qinvoice
     protected $gateway = '';
     private $username;
     private $password;
+    private $document_type = 'invoice';
 
     public $reference;
     public $companyname;
@@ -116,22 +117,25 @@ class Qinvoice
         curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
         $data = curl_exec($ch);
         if (curl_errno($ch)) {
-            print curl_error($ch);
+            return curl_error($ch);
         } else {
             curl_close($ch);
         }
         return $data;
     }
 
+    public function setDocumentType($type){
+        $this->document_type = $type;
+    }
     private function buildXML()
     {
         $string = '<request>
-                        <login mode="newInvoice">
+                        <login mode="'. ($this->document_type) .'">
                             <username><![CDATA[' . $this->username . ']]></username>
                             <password><![CDATA[' . $this->password . ']]></password>
-                            <identifier><![CDATA[Magento_2.2.1]]></identifier>
+                            <identifier><![CDATA[Magento_2.2.3]]></identifier>
                         </login>
-                        <invoice>
+                        <'. $this->document_type .'>
                             <date><![CDATA[' . $this->date . ']]></date>
                             <reference><![CDATA[' . $this->reference . ']]></reference>
                             <companyname><![CDATA[' . $this->companyname . ']]></companyname>
@@ -190,7 +194,7 @@ class Qinvoice
             $string .= '<file url="' . $f['url'] . '">' . $f['name'] . '</file>';
         }
         $string .= '</files>
-                </invoice>
+                </'. $this->document_type .'>
             </request>';
         return $string;
     }

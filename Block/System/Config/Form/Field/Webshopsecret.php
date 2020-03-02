@@ -17,15 +17,13 @@ class Webshopsecret extends \Magento\Config\Block\System\Config\Form\Field
 	
     protected function _getElementHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
-		$value = $element->getValue();
-
 		 if ($element->getValue() == '') {
-        	$value = md5( $this->_storeManager->getStore()->getName() . $this->_storeManager->getStore()->getBaseUrl() );
-            $element->setValue( $value );
+        	$value = sha1( $this->_storeManager->getStore()->getName() . $this->_storeManager->getStore()->getBaseUrl() );
+            $element->setValues( array('value' => $value ));
             $this->resourceConfig->saveConfig(
-				'invoice_options/invoice/webshop_secret', 
-				$value, 
-				\Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT, 
+				'invoice_options/invoice/webshop_secret',
+				$value,
+				\Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
 				\Magento\Store\Model\Store::DEFAULT_STORE_ID
 			);
         }

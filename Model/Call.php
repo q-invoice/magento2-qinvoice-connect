@@ -30,6 +30,7 @@ class Call
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
         \Magento\Tax\Model\Calculation $calculation,
         \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
+        \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Psr\Log\LoggerInterface $logger
     )
     {
@@ -43,6 +44,7 @@ class Call
         $this->_productCollectionFactory = $productCollectionFactory;
         $this->_calculation = $calculation;
         $this->_stockItemRepository = $stockItemRepository;
+        $this->resultJsonFactory        = $resultJsonFactory;
         $this->_logger = $logger;
     }
 
@@ -84,24 +86,20 @@ class Call
                         $this->renderJson();
                         break;
                     case 'stock':
-                        echo $this->updateStock($this->_request->getParam('sku'), $this->_request->getParam('quantity'));
-                        break;
+                        return $this->updateStock($this->_request->getParam('sku'), $this->_request->getParam('quantity'));
                     case 'export':
-                        echo $this->exportCatalog($this->_request->getParam('store_id'));
-                        break;
+                        return $this->exportCatalog($this->_request->getParam('store_id'));
                     case 'stores':
-                        echo $this->listStores();
-                        break;
-
+                        return $this->listStores();
                 }
-                exit();
+                return '';
             }
         }
     }
 
     private function renderJson($data = null)
     {
-        echo json_encode(
+        $json = json_encode(
             array(
                 'response' =>
                     array(
@@ -112,7 +110,9 @@ class Call
                 'data' => $data,
             )
         );
-        exit();
+        $jsonResult = $this->resultJsonFactory->create();
+        $jsonResult->setData($json);
+        return $jsonResult;
     }
 
     public function updateStock($sku = '', $quantity = '')
@@ -168,7 +168,7 @@ class Call
         if (md5(implode("", $params) . $this->nonce . $secret) != $this->signature) {
             $this->code = '030';
             $this->message = 'Invalid signature';
-            $this->renderJson();
+            return $this->renderJson();
         }
     }
 
@@ -183,8 +183,8 @@ class Call
 
         $this->code = '920';
         $this->message = sprintf('%d stores found', count($store_array));
-        $this->renderJson($store_array);
-        return;
+        return $this->renderJson($store_array);
+
     }
 
     public function exportCatalog($store_id = null)
@@ -257,7 +257,7 @@ class Call
         $this->message = sprintf('%d items exported', count($products_array));
         $this->renderJson($products_array);
 
-        return;
+        return '';
 
     }
 

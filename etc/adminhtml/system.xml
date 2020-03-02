@@ -20,6 +20,11 @@
                 <field id="api_password" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>API Password</label>
                 </field>
+                <field id="document_type" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>After request</label>
+                    <source_model>\Qinvoice\Connect\Model\Config\Source\DocumentType</source_model>
+                    <comment><![CDATA[Document to generate for orders]]></comment>
+                </field>
                 <field id="layout_code" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Layout Code</label>
                     <comment><![CDATA[Optional]]></comment>                
@@ -37,19 +42,19 @@
                     <comment><![CDATA[Supplements the document remark. e.g. Your payment has been received.]]></comment>
                 </field>
                 <field id="invoice_trigger_order" translate="label" type="multiselect" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Send invoice for placed orders</label>
+                    <label>Send document for placed orders</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\PaymentMethod</source_model>
                     <comment><![CDATA[An invoice will be created when an order is received with selected payment methods. REGARDLESS of payment status.]]></comment>
                 </field>
                 <field id="invoice_trigger_payment" translate="label" type="multiselect" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Send invoice for paid orders</label>
+                    <label>Send document for paid orders</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\PaymentMethod</source_model>
                     <comment><![CDATA[An invoice will be created when a SUCCESSFUL payment is received for orders with selected payment methods.]]></comment>
                 </field>
                 <field id="invoice_action" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>After request</label>
-                    <source_model>\Qinvoice\Connect\Model\Config\Source\Invoice</source_model>
-                    <comment><![CDATA[Create invoice and send to customer?]]></comment>
+                    <source_model>\Qinvoice\Connect\Model\Config\Source\Action</source_model>
+                    <comment><![CDATA[Create document and send to customer?]]></comment>
                 </field>
                 <field id="save_relation" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Save customer details</label>

@@ -1,10 +1,10 @@
 {
   "name": "qnvc/magento-connect",
+  "version": "2.2.5",
   "description": "Magento 2 q-invoice connect",
   "require": {
   },
   "type": "magento2-module",
-  "version": "2.2.4",
   "license": [
     "proprietary"
   ],

@@ -38,8 +38,9 @@ class Connect
 
     public function createInvoiceForQinvoice($order, $isPaid = false)
     {
-        $invoice = $this->_qinvoice;
+        $document = $this->_qinvoice;
 
+        $document->setDocumentType($this->_scopeConfig->getValue('invoice_options/invoice/document_type', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
         $paid_remark = '';
 
         $arrData = [];
@@ -50,7 +51,7 @@ class Connect
         if ($isPaid) {
             // GETTING API URL
             $paid_remark = $this->_scopeConfig->getValue('invoice_options/invoice/paid_remark', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-            $invoice->paid = 1;
+            $document->paid = 1;
         }
 
         foreach ($order->getAllVisibleItems() as $row) {
@@ -74,79 +75,67 @@ class Connect
         $payment = $order->getPayment();
         $payment_method = $payment->getMethodInstance();
 
-        $invoice->payment_method = $payment->getMethod();
-        $invoice->payment_method_label = $payment_method->getTitle();
+        $document->payment_method = $payment->getMethod();
+        $document->payment_method_label = $payment_method->getTitle();
 
-        $invoice->companyname = $rowThree['company'];       // Your customers company name
-        $invoice->firstname = $rowThree['firstname'];       // Your customers contact name
-        $invoice->lastname = $rowThree['lastname'];       // Your customers contact name
-        $invoice->email = $order->getCustomerEmail();                // Your customers emailaddress (invoice will be sent here)
-        $invoice->phone = $rowThree['telephone'];
-        $invoice->address = $rowThree['street'];                // Self-explanatory
-        $invoice->zipcode = $rowThree['postcode'];              // Self-explanatory
-        $invoice->city = $rowThree['city'];                     // Self-explanatory
-        $invoice->country = $rowThree['country_id'];                 // 2 character country code: NL for Netherlands, DE for Germany etc
-        $invoice->vatnumber = $order->getBillingAddress()->getVatId();
+        $document->companyname = $rowThree['company'];       // Your customers company name
+        $document->firstname = $rowThree['firstname'];       // Your customers contact name
+        $document->lastname = $rowThree['lastname'];       // Your customers contact name
+        $document->email = $order->getCustomerEmail();                // Your customers emailaddress (invoice will be sent here)
+        $document->phone = $rowThree['telephone'];
+        $document->address = $rowThree['street'];                // Self-explanatory
+        $document->zipcode = $rowThree['postcode'];              // Self-explanatory
+        $document->city = $rowThree['city'];                     // Self-explanatory
+        $document->country = $rowThree['country_id'];                 // 2 character country code: NL for Netherlands, DE for Germany etc
+        $document->vatnumber = $order->getBillingAddress()->getVatId();
 
         if (is_object($order->getShippingAddress())) { // returns null when no address is specified
             $rowFour = $order->getShippingAddress()->getData();
 
-            $invoice->delivery_companyname = $rowFour['company'];       // Your customers company name
-            $invoice->delivery_firstname = $rowFour['firstname'];       // Your customers contact name
-            $invoice->delivery_lastname = $rowFour['lastname'];       // Your customers contact name
-            $invoice->delivery_address = $rowFour['street'];                // Self-explanatory
-            $invoice->delivery_zipcode = $rowFour['postcode'];              // Self-explanatory
-            $invoice->delivery_city = $rowFour['city'];                     // Self-explanatory
-            $invoice->delivery_country = $rowFour['country_id'];
-            $invoice->delivery_email = $order->getCustomerEmail();                // Your customers emailaddress (invoice will be sent here)
-            $invoice->delivery_phone = $order->getShippingAddress()->getTelephone();
+            $document->delivery_companyname = $rowFour['company'];       // Your customers company name
+            $document->delivery_firstname = $rowFour['firstname'];       // Your customers contact name
+            $document->delivery_lastname = $rowFour['lastname'];       // Your customers contact name
+            $document->delivery_address = $rowFour['street'];                // Self-explanatory
+            $document->delivery_zipcode = $rowFour['postcode'];              // Self-explanatory
+            $document->delivery_city = $rowFour['city'];                     // Self-explanatory
+            $document->delivery_country = $rowFour['country_id'];
+            $document->delivery_email = $order->getCustomerEmail();                // Your customers emailaddress (invoice will be sent here)
+            $document->delivery_phone = $order->getShippingAddress()->getTelephone();
         }
 
-        $invoice->vat = '';                     // Self-explanatory
+        $document->vat = '';                     // Self-explanatory
 
         $save_relation = $this->_scopeConfig->getValue('invoice_options/invoice/save_relation', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        $invoice->saverelation = $save_relation;
+        $document->saverelation = $save_relation;
 
-        $invoice_remark = $this->_scopeConfig->getValue('invoice_options/invoice/invoice_remark', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $document_remark = $this->_scopeConfig->getValue('invoice_options/invoice/invoice_remark', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
-        $invoice_remark = str_replace('{order_id}', $order->getIncrementId(), $invoice_remark);
-        //$invoice_remark = str_replace('{shipping_description}', $rowOne['shipping_description'], $invoice_remark);
+        $document_remark = str_replace('{order_id}', $order->getIncrementId(), $document_remark);
+        //$document_remark = str_replace('{shipping_description}', $rowOne['shipping_description'], $document_remark);
 
-        $invoice->remark = $invoice_remark . "\n" . $paid_remark;
+        $document->remark = $document_remark . "\n" . $paid_remark;
 
-        $invoice_action = $this->_scopeConfig->getValue('invoice_options/invoice/invoice_action', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        $invoice->action = $invoice_action;
+        $document_action = $this->_scopeConfig->getValue('invoice_options/invoice/invoice_action', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $document->action = $document_action;
 
         $calculation_method = $this->_scopeConfig->getValue('invoice_options/invoice/calculation_method', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        $invoice->calculation_method = $calculation_method;
+        $document->calculation_method = $calculation_method;
 
-        $layout_code_s = @unserialize($layout_code);
-        if ($layout_code_s !== false) {
-            // serialized
-            $layout_code = @unserialize($layout_code);
-            if (isset($layout_code[$rowFour['country_id']])) {
-                $layout_code = @$layout_code[$rowFour['country_id']];
-            } else {
-                $layout_code = @$layout_code['default'];
-            }
-        } else {
-            // not serialized
-            $layout_code = $layout_code;
-        }
+        $layout_code = isset($layout_code['default']) ? $layout_code['default'] : '';
 
-        $invoice->setLayout($layout_code);
+        $document->setLayout($layout_code);
 
-        $invoice_tag = $this->_scopeConfig->getValue('invoice_options/invoice/invoice_tag', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $document_tag = $this->_scopeConfig->getValue('invoice_options/invoice/invoice_tag', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
         $pa_array = $this->_scopeConfig->getValue('invoice_options/invoice/product_attributes', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
 
         // OPTIONAL: Add tags
-        $invoice->reference = $order->getIncrementId();
-        $invoice->addTag($order->getIncrementId());
-        $invoice->addTag($invoice_tag);
-        //  $invoice->addTag('send: '. $send_mail);
-        //  $invoice->addTag('paid: '. $paid .' '. $rowOne['total_paid']);
+        $document->reference = $order->getIncrementId();
+        $document->addTag($order->getIncrementId());
+        $document->addTag($document_tag);
+        //  $document->addTag('send: '. $send_mail);
+        //  $document->addTag('paid: '. $paid .' '. $rowOne['total_paid']);
 
         $attributes = $this->_product->getAttributes();
         $attributeArray = array();
@@ -181,19 +170,19 @@ class Connect
             }
 
 
-            if (@$arrItemOptions['options']) {
+            if (is_array($arrItemOptions['options'])) {
                 for ($k = 0; $k < count($arrItemOptions['options']); $k++) {
                     $varDescription .= "\n" . $arrItemOptions['options'][$k]['label'] . ": " . $arrItemOptions['options'][$k]['print_value'] . "\n";
                 }
             }
 
-            if (@$arrItemOptions['attributes_info']) {
+            if (is_array($arrItemOptions['attributes_info'])) {
                 for ($k = 0; $k < count($arrItemOptions['attributes_info']); $k++) {
                     $varDescription .= "\n" . $arrItemOptions['attributes_info'][$k]['label'] . ": " . $arrItemOptions['attributes_info'][$k]['value'] . "\n";
                 }
             }
 
-            if (@$arrItemOptions['bundle_options']) {
+            if (is_array($arrItemOptions['bundle_options'])) {
                 foreach ($arrItemOptions['bundle_options'] as $option) {
                     foreach ($option['value'] as $value) {
                         $varDescription .= "\n" . '[' . $option['label'] . '] ' . $value['qty'] . ' x ' . $value['title'];
@@ -215,7 +204,7 @@ class Connect
                 'categories' => $category,
             );
 
-            $invoice->addItem($params);
+            $document->addItem($params);
 
         }
 
@@ -232,18 +221,13 @@ class Connect
                 'categories' => 'shipping',
             );
 
-            $invoice->addItem($params);
+            $document->addItem($params);
 
         }
 
-        // $order = Mage::getModel('sales/order')->loadByIncrementId($varOrderID);
-
-        // $orderDetails = $order->getData();
 
         $couponCode = $order->getCouponCode();
-        //echo $couponCode;
-        //print_r($order);
-        // $couponCode = $orderDetails['coupon_code'];
+
 
         if ($couponCode > '') {
             $oCoupon = $this->_couponFactory->create()->load($couponCode, 'code');
@@ -264,34 +248,11 @@ class Connect
                 'categories' => 'discount',
             );
 
-            $invoice->addItem($params);
+            $document->addItem($params);
         }
 
 
-        // $coupon = Mage::getModel('salesrule/rule');
-        // $couponCollection = $coupon->getCollection();
-        // foreach($couponCollection as $c){
-        //     print_r($c);
-        //     echo 'Code:'.$c->getCode().'--->Discount Amount:'.$c->getDiscountAmount().'<br />';
-
-        //     $params = array(  
-        //         'code' => 'DSCNT',  
-        //         'description' => $c->getCode(),
-        //         'price' => $rowOne['base_subtotal'] * ($c->getDiscountAmount()/100),
-        //         'price_incl' => $rowOne['base_subtotal'] * ($c->getDiscountAmount()/100),
-        //         'price_vat' => 0,
-        //         'vatpercentage' => 0,
-        //         'discount' => 0,
-        //         'quantity' => -100,
-        //         'categories' => 'discount'
-        //         );
-
-        //     $invoice->addItem($params);
-
-        // }
-
-
-        $result = $invoice->sendRequest();
+        $result = $document->sendRequest();
 
         if (!is_numeric($result)) {
             $this->notify_admin('Qinvoice Connect Error', 'Could not send invoice for order ' . $order->getIncrementId());
@@ -299,8 +260,6 @@ class Connect
 
         return true;
 
-
-        //$curlInvoiveResult = $this->sendCurlRequest($createInvoiceXML);
     }
 
     public function notify_admin($subject, $msg)
