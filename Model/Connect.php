@@ -52,6 +52,20 @@ class Connect
             // GETTING API URL
             $paid_remark = $this->_scopeConfig->getValue('invoice_options/invoice/paid_remark', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
             $document->paid = 1;
+
+            // todo:: Add payment
+//            $payment = $order->getPayment();
+//            $method = $payment->getMethodInstance();
+
+//            $document->addPayment(
+//                $amount_in_cents,
+//                $payment->getMethod(),
+//                $payment_transaction_id,
+//                $currency,
+//                $payment_date,
+//                sprintf('Payment for %d', $order->getIncrementId())
+//            );
+
         }
 
         foreach ($order->getAllVisibleItems() as $row) {
