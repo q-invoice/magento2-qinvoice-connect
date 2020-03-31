@@ -130,7 +130,7 @@ class Qinvoice
     private function buildXML()
     {
         $string = '<request>
-                        <login mode="'. ($this->document_type) .'">
+                        <login mode="new'. ucfirst($this->document_type) .'">
                             <username><![CDATA[' . $this->username . ']]></username>
                             <password><![CDATA[' . $this->password . ']]></password>
                             <identifier><![CDATA[Magento_2.2.3]]></identifier>
@@ -184,7 +184,7 @@ class Qinvoice
                 <vatpercentage>' . $i['vatpercentage'] . '</vatpercentage>
                 <discount>' . $i['discount'] . '</discount>
                 <categories><![CDATA[' . $i['categories'] . ']]></categories>
-                
+
             </item>';
         }
 
