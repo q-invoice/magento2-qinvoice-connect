@@ -11,7 +11,7 @@
             <group id="invoice" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Qinvoice</label>
                 <field id="api_url" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>API URL</label>    
+                    <label>API URL</label>
                     <comment><![CDATA[e.g. https://app.q-invoice.com/api/xml/1.2/]]></comment>
                 </field>
                 <field id="api_username" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -27,15 +27,15 @@
                 </field>
                 <field id="layout_code" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Layout Code</label>
-                    <comment><![CDATA[Optional]]></comment>                
+                    <comment><![CDATA[Optional]]></comment>
                 </field>
                 <field id="invoice_remark" translate="label" type="textarea" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Invoice remark</label>
-                    <comment><![CDATA[e.g. Order #{order_id}.]]></comment>           
+                    <comment><![CDATA[e.g. Order #{order_id}.]]></comment>
                 </field>
                 <field id="invoice_tag" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Invoice tag</label>
-                    <comment><![CDATA[Optional. e.g. Your webshop name.]]></comment>                    
+                    <comment><![CDATA[Optional. e.g. Your webshop name.]]></comment>
                 </field>
                 <field id="paid_remark" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Paid remark</label>
@@ -59,12 +59,12 @@
                 <field id="save_relation" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Save customer details</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\Relation</source_model>
-                    <comment><![CDATA[Save customer details to address book?]]></comment>        
+                    <comment><![CDATA[Save customer details to address book?]]></comment>
                 </field>
                 <field id="calculation_method" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Calculation method</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\Method</source_model>
-                    <comment><![CDATA[Select leading price type]]></comment>                  
+                    <comment><![CDATA[Select leading price type]]></comment>
                 </field>
                 <field id="product_attributes" translate="label" type="multiselect" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Products attributes</label>
@@ -73,7 +73,7 @@
                 </field>
                 <field id="webshop_secret" translate="label" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Webshop secret</label>
-                    <frontend_model>Qinvoice\Connect\Block\System\Config\Form\Field\Webshopsecret</frontend_model> 
+                    <frontend_model>Qinvoice\Connect\Block\System\Config\Form\Field\Webshopsecret</frontend_model>
                     <comment><![CDATA[Your secret key. Used for inventory synchronisation.]]></comment>
                 </field>
             </group>

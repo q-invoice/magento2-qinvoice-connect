@@ -20,6 +20,7 @@ class Qinvoice
     public $lastname;
     public $email;
     public $address;
+    public $address2;
     public $zipcode;
     public $city;
     public $country;
@@ -29,6 +30,7 @@ class Qinvoice
     public $delivery_firstname;
     public $delivery_lastname;
     public $delivery_address;
+    public $delivery_address2;
     public $delivery_zipcode;
     public $delivery_city;
     public $delivery_country;
@@ -52,6 +54,8 @@ class Qinvoice
     private $items = [];
     private $files = [];
     private $recurring;
+    private $payment = false;
+
 
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeInterface
@@ -71,6 +75,17 @@ class Qinvoice
     {
         $this->tags[] = $tag;
     }
+
+    public function addPayment($amount, $method, $transaction_id, $currency = 'EUR', $date = '', $description = ''){
+        $this->payment = new StdClass();
+        $this->payment->amount = $amount;
+        $this->payment->method = $method;
+        $this->payment->transaction_id = $transaction_id;
+        $this->payment->currency = $currency;
+        $this->payment->description = $description;
+        $this->payment->date = $date == '' ? Date('Y-m-d') : $date;
+    }
+
 
     public function setLayout($code)
     {
@@ -130,7 +145,7 @@ class Qinvoice
     private function buildXML()
     {
         $string = '<request>
-                        <login mode="'. ($this->document_type) .'">
+                        <login mode="new'. ucfirst($this->document_type) .'">
                             <username><![CDATA[' . $this->username . ']]></username>
                             <password><![CDATA[' . $this->password . ']]></password>
                             <identifier><![CDATA[Magento_2.2.3]]></identifier>
@@ -144,6 +159,7 @@ class Qinvoice
                             <email><![CDATA[' . $this->email . ']]></email>
                             <phone><![CDATA[' . $this->phone . ']]></phone>
                             <address><![CDATA[' . $this->address . ']]></address>
+                            <address><![CDATA[' . $this->address2 . ']]></address>
                             <zipcode><![CDATA[' . $this->zipcode . ']]></zipcode>
                             <city><![CDATA[' . $this->city . ']]></city>
                             <country><![CDATA[' . $this->country . ']]></country>
@@ -153,6 +169,7 @@ class Qinvoice
                             <delivery_firstname><![CDATA[' . $this->delivery_firstname . ']]></delivery_firstname>
                             <delivery_lastname><![CDATA[' . $this->delivery_lastname . ']]></delivery_lastname>
                             <delivery_address><![CDATA[' . $this->delivery_address . ']]></delivery_address>
+                            <delivery_address><![CDATA[' . $this->delivery_address2 . ']]></delivery_address>
                             <delivery_zipcode><![CDATA[' . $this->delivery_zipcode . ']]></delivery_zipcode>
                             <delivery_city><![CDATA[' . $this->delivery_city . ']]></delivery_city>
                             <delivery_country><![CDATA[' . $this->delivery_country . ']]></delivery_country>
@@ -184,12 +201,24 @@ class Qinvoice
                 <vatpercentage>' . $i['vatpercentage'] . '</vatpercentage>
                 <discount>' . $i['discount'] . '</discount>
                 <categories><![CDATA[' . $i['categories'] . ']]></categories>
-                
+
             </item>';
         }
 
-        $string .= '</items>
-                    <files>';
+        $string .= '</items>';
+
+        if($this->payment != false){
+            $string .= '<payment>
+								    <transaction_id><![CDATA['. $this->payment->transaction_id .']]></transaction_id>
+								    <currency><![CDATA['. $this->payment->currency .']]></currency>
+								    <method><![CDATA['. $this->payment->method .']]></method>
+								    <amount><![CDATA['. $this->payment->amount .']]></amount>
+								    <date><![CDATA['. $this->payment->date .']]></date>
+								    <description><![CDATA['. $this->payment->description .']]></description>
+                                </payment>';
+        }
+
+        $string .= '<files>';
         foreach ($this->files as $f) {
             $string .= '<file url="' . $f['url'] . '">' . $f['name'] . '</file>';
         }

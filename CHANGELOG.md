@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.3.0] - 2020-03-31
+### Added
+- Preliminary support for payment data
+
+### Changed
+- Setting of webshop secret on install
+
 ## [2.2.5] - 2020-03-02
 ### Changed
 - Resolved various warnings

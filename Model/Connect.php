@@ -52,6 +52,20 @@ class Connect
             // GETTING API URL
             $paid_remark = $this->_scopeConfig->getValue('invoice_options/invoice/paid_remark', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
             $document->paid = 1;
+
+            // todo:: Add payment
+//            $payment = $order->getPayment();
+//            $method = $payment->getMethodInstance();
+
+//            $document->addPayment(
+//                $amount_in_cents,
+//                $payment->getMethod(),
+//                $payment_transaction_id,
+//                $currency,
+//                $payment_date,
+//                sprintf('Payment for %d', $order->getIncrementId())
+//            );
+
         }
 
         foreach ($order->getAllVisibleItems() as $row) {
@@ -170,19 +184,19 @@ class Connect
             }
 
 
-            if (is_array($arrItemOptions['options'])) {
+            if (isset($arrItemOptions['options']) && is_array($arrItemOptions['options'])) {
                 for ($k = 0; $k < count($arrItemOptions['options']); $k++) {
                     $varDescription .= "\n" . $arrItemOptions['options'][$k]['label'] . ": " . $arrItemOptions['options'][$k]['print_value'] . "\n";
                 }
             }
 
-            if (is_array($arrItemOptions['attributes_info'])) {
+            if (isset($arrItemOptions['attributes_info']) && is_array($arrItemOptions['attributes_info'])) {
                 for ($k = 0; $k < count($arrItemOptions['attributes_info']); $k++) {
                     $varDescription .= "\n" . $arrItemOptions['attributes_info'][$k]['label'] . ": " . $arrItemOptions['attributes_info'][$k]['value'] . "\n";
                 }
             }
 
-            if (is_array($arrItemOptions['bundle_options'])) {
+            if (isset($arrItemOptions['bundle_options']) && is_array($arrItemOptions['bundle_options'])) {
                 foreach ($arrItemOptions['bundle_options'] as $option) {
                     foreach ($option['value'] as $value) {
                         $varDescription .= "\n" . '[' . $option['label'] . '] ' . $value['qty'] . ' x ' . $value['title'];
