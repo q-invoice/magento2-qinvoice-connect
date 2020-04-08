@@ -1,4 +1,8 @@
 <?php
+/**
+ * Copyright ©q-invoice B.V.. All rights reserved.
+ */
+
 namespace Qinvoice\Connect\Block\System\Config\Form\Field;
 
 class Webshopsecret extends \Magento\Config\Block\System\Config\Form\Field

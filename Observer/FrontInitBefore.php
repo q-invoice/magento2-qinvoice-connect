@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright ©q-invoice B.V.. All rights reserved.
  */

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright ©q-invoice B.V.. All rights reserved.
  */
@@ -225,7 +224,7 @@ class Call
             $vat_percent = $taxCalculation->getRate($request->setProductClassId($taxClassId));
 
             $tier_prices = array();
-            //$product_data = Mage::getModel('catalog/product')->loadByAttribute('sku',$this->sku); 
+            //$product_data = Mage::getModel('catalog/product')->loadByAttribute('sku',$this->sku);
             $tier_prices = ($product->getTierPrice());
             foreach ($tier_prices as $tp) {
                 $tp_array[$tp['price_qty']] = $tp['price'];
