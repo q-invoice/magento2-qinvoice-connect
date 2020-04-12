@@ -1,6 +1,6 @@
 {
   "name": "qnvc/magento-connect",
-  "version": "2.2.5",
+  "version": "2.3.0",
   "description": "Magento 2 q-invoice connect",
     "require": {
         "php": "~7.1.3||~7.2.0||~7.3.0",
