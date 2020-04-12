@@ -5,7 +5,10 @@
 
 namespace Qinvoice\Connect\Model;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
+use Zend\Http\Client\Adapter\Curl;
+use Zend\Http\ClientFactory;
 
 class Qinvoice
 {
@@ -54,10 +57,13 @@ class Qinvoice
     private $files = [];
     private $recurring;
 
-    public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeInterface
-    ) {
+    private $httpClientFactory;
 
+    public function __construct(
+        ScopeConfigInterface $scopeInterface,
+        ClientFactory $httpClientFactory
+    ) {
+        $this->httpClientFactory = $httpClientFactory;
         $this->username = $scopeInterface->getValue(
             'invoice_options/invoice/api_username',
             ScopeInterface::SCOPE_STORE
@@ -112,25 +118,40 @@ class Qinvoice
 
     public function sendRequest()
     {
+        $headers = ["Content-type: application/atom+xml"];
+
+        $httpHeaders = new \Zend\Http\Headers();
+        $httpHeaders->addHeaders($headers);
+
+        $request = new \Zend\Http\Request();
+        $request->setHeaders($httpHeaders);
+        $request->setUri($this->gateway);
+        $request->setMethod(\Zend\Http\Request::METHOD_GET);
+
         $content = "<?xml version='1.0' encoding='UTF-8'?>";
         $content .= $this->buildXML();
 
-        $headers = ["Content-type: application/atom+xml"];
+        $request->setContent($content);
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->gateway);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 120);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
-        $data = curl_exec($ch);
-        if (curl_errno($ch)) {
-            return curl_error($ch);
-        } else {
-            curl_close($ch);
-        }
-        return $data;
+        /** @var \Zend\Http\Client $client */
+        $client = $this->httpClientFactory->create();
+
+        $options = [
+            'adapter'   => Curl::class,
+            'curloptions' => [
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_RETURNTRANSFER => true
+            ]
+            ,
+            'timeout' => 120
+        ];
+        $client->setOptions($options);
+
+        $response = $client->send($request);
+
+
+        return $response->getContent();
     }
 
     public function setDocumentType($type)
