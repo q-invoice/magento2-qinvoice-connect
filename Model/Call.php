@@ -5,6 +5,21 @@
 
 namespace Qinvoice\Connect\Model;
 
+use Exception;
+use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\ProductFactory;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
+use Magento\CatalogInventory\Api\StockRegistryInterface;
+use Magento\CatalogInventory\Model\Stock\StockItemRepository;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\Request\Http;
+use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\UrlInterface;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Tax\Model\Calculation;
+use Psr\Log\LoggerInterface;
+
 class Call
 {
 
@@ -17,22 +32,20 @@ class Call
 
     protected $_logger;
 
-    public function __construct
-    (
-        \Qinvoice\Connect\Model\Connect $connect,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeInterface,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\App\Request\Http $request,
-        \Magento\Catalog\Model\Product $product,
-        \Magento\Catalog\Model\ProductFactory $productFactory,
-        \Magento\CatalogInventory\Model\Stock\StockItemRepository $stockItemRepository,
-        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
-        \Magento\Tax\Model\Calculation $calculation,
-        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
-        \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
-        \Psr\Log\LoggerInterface $logger
-    )
-    {
+    public function __construct(
+        Connect $connect,
+        ScopeConfigInterface $scopeInterface,
+        StoreManagerInterface $storeManager,
+        Http $request,
+        Product $product,
+        ProductFactory $productFactory,
+        StockItemRepository $stockItemRepository,
+        CollectionFactory $productCollectionFactory,
+        Calculation $calculation,
+        StockRegistryInterface $stockRegistry,
+        JsonFactory $resultJsonFactory,
+        LoggerInterface $logger
+    ) {
         $this->_scopeConfig = $scopeInterface;
         $this->_storeManager = $storeManager;
         $this->_request = $request;
@@ -70,7 +83,6 @@ class Call
                     return $this->renderJson();
                 }
 
-
                 if (!$this->signature || $this->signature == '') {
                     $this->code = "021";
                     $this->message = 'Signature missing.';
@@ -79,13 +91,17 @@ class Call
 
                 switch ($mode) {
                     case 'test':
-                        $this->checkSignature(array("test"));
+                        $this->checkSignature(["test"]);
                         $this->code = "999";
                         $this->message = 'Plugin installed.';
                         $this->renderJson();
                         break;
                     case 'stock':
-                        return $this->updateStock($this->_request->getParam('sku'), $this->_request->getParam('quantity'));
+                         $this->updateStock(
+                             $this->_request->getParam('sku'),
+                             $this->_request->getParam('quantity')
+                         );
+                        return '';
                     case 'export':
                         return $this->exportCatalog($this->_request->getParam('store_id'));
                     case 'stores':
@@ -99,15 +115,15 @@ class Call
     private function renderJson($data = null)
     {
         $json = json_encode(
-            array(
+            [
                 'response' =>
-                    array(
+                    [
                         'version' => $this->version,
                         'code' => $this->code,
                         'message' => $this->message,
-                    ),
+                    ],
                 'data' => $data,
-            )
+            ]
         );
         $jsonResult = $this->resultJsonFactory->create();
         $jsonResult->setData($json);
@@ -116,7 +132,6 @@ class Call
 
     public function updateStock($sku = '', $quantity = '')
     {
-
 
         if ($sku == '') {
             $this->code = '100';
@@ -130,12 +145,11 @@ class Call
             $this->renderJson();
         }
 
-        $this->checkSignature(array("stock", $sku, $quantity));
-
+        $this->checkSignature(["stock", $sku, $quantity]);
 
         try {
             $stockItem = $this->_stockRegistry->getStockItemBySku($sku);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->code = '102';
             $this->message = $e->getMessage();
             $this->renderJson();
@@ -145,26 +159,23 @@ class Call
         $stockItem->setIsInStock((bool)$quantity); // this line
         try {
             $this->_stockRegistry->updateStockItemBySku($sku, $stockItem);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->code = '199';
             $this->message = $e->getMessage();
             $this->renderJson();
         }
 
-
         $this->code = '900';
         $this->message = 'Product updated successfully';
         $this->renderJson();
-
-
     }
 
-    private function checkSignature($params = array())
+    private function checkSignature($params = [])
     {
 
-        $secret = $this->_scopeConfig->getValue('invoice_options/invoice/webshop_secret', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $secret = $this->_scopeConfig->getValue('invoice_options/invoice/webshop_secret', ScopeInterface::SCOPE_STORE);
 
-        if (md5(implode("", $params) . $this->nonce . $secret) != $this->signature) {
+        if ($secret != $this->signature) {
             $this->code = '030';
             $this->message = 'Invalid signature';
             return $this->renderJson();
@@ -174,7 +185,7 @@ class Call
     public function listStores()
     {
 
-        $this->checkSignature(array("stores"));
+        $this->checkSignature(["stores"]);
 
         foreach ($this->_storeManager->getStores() as $store) {
             $store_array[] = $store->getData();
@@ -183,15 +194,14 @@ class Call
         $this->code = '920';
         $this->message = sprintf('%d stores found', count($store_array));
         return $this->renderJson($store_array);
-
     }
 
     public function exportCatalog($store_id = null)
     {
 
-        $this->checkSignature(array("export", $store_id));
+        $this->checkSignature(["export", $store_id]);
 
-        $products_array = array();
+        $products_array = [];
         $products = $this->_productCollectionFactory->create();
         $products->addAttributeToSelect('*');
 
@@ -199,7 +209,7 @@ class Call
             try {
                 $store = $this->_storeManager->getStore($store_id);
 
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->code = '130';
                 $this->message = sprintf('Could not read from store ID %d', $store_id);
                 $this->renderJson();
@@ -208,7 +218,6 @@ class Call
         } else {
             $store = $this->_storeManager->getStore('default');
         }
-
 
         //Magento does not load all attributes by default
         //Add as many as you like
@@ -223,33 +232,35 @@ class Call
             $taxClassId = $product->getTaxClassId();
             $vat_percent = $taxCalculation->getRate($request->setProductClassId($taxClassId));
 
-            $tier_prices = array();
+            $tier_prices = [];
             //$product_data = Mage::getModel('catalog/product')->loadByAttribute('sku',$this->sku);
             $tier_prices = ($product->getTierPrice());
             foreach ($tier_prices as $tp) {
                 $tp_array[$tp['price_qty']] = $tp['price'];
             }
 
-
             try {
                 $stock = $this->_stockItemRepository->get($product->getId());
-            }catch (\Exception $e){
+            } catch (Exception $e) {
                 $stock = false;
             }
 
-            $products_array[] = array(
+            $products_array[] = [
                 'entity_id' => $product['entity_id'],
                 'sku' => $product['sku'],
                 'name' => $product['name'],
                 'price' => $product['price'],
                 'weight' => $product['weight'],
-                'thumbnail' => $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . $product['thumbnail'],
+                'thumbnail' => $this->_storeManager->getStore()->getBaseUrl(
+                    UrlInterface::URL_TYPE_MEDIA
+                )
+                    . $product['thumbnail'],
                 'special_price' => $product['special_price'],
                 'stock' => !$stock ? 0 : $stock->getQty(),
                 'min_stock' => !$stock ? 0 : $stock->getMinQty(),
                 'vat' => $vat_percent * 100,
                 'tier_prices' => $tp_array,
-            );
+            ];
         }
 
         $this->code = '910';
@@ -257,13 +268,18 @@ class Call
         $this->renderJson($products_array);
 
         return '';
-
     }
 
     public function sendOnOrderPlace($order)
     {
         // GETTING TRIGGER SETTING
-        $order_triggers = explode(",", $this->_scopeConfig->getValue('invoice_options/invoice/invoice_trigger_order', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
+        $order_triggers = explode(
+            ",",
+            $this->_scopeConfig->getValue(
+                'invoice_options/invoice/invoice_trigger_order',
+                ScopeInterface::SCOPE_STORE
+            )
+        );
         $payment = $order->getPayment();
 
         if (in_array($payment->getMethod(), $order_triggers)) {
@@ -274,17 +290,18 @@ class Call
     public function sendOnOrderPay($order)
     {
         // GETTING TRIGGER SETTING
-        $invoice_triggers = explode(",", $this->_scopeConfig->getValue('invoice_options/invoice/invoice_trigger_payment', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
+        $invoice_triggers = explode(
+            ",",
+            $this->_scopeConfig->getValue(
+                'invoice_options/invoice/invoice_trigger_payment',
+                ScopeInterface::SCOPE_STORE
+            )
+        );
 
         $payment = $order->getPayment();
 
         if (in_array($payment->getMethod(), $invoice_triggers)) {
             $this->_connect->createInvoiceForQinvoice($order, true);
         }
-    }
-
-    public function orderStatusChange($order)
-    {
-
     }
 }

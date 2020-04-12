@@ -5,7 +5,9 @@
 
 namespace Qinvoice\Connect\Model\Config\Source;
 
-class Method implements \Magento\Framework\Option\ArrayInterface
+use Magento\Framework\Option\ArrayInterface;
+
+class Method implements ArrayInterface
 {
     public function toOptionArray()
     {

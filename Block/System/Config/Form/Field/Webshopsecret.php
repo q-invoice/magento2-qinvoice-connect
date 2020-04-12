@@ -5,13 +5,16 @@
 
 namespace Qinvoice\Connect\Block\System\Config\Form\Field;
 
-class Webshopsecret extends \Magento\Config\Block\System\Config\Form\Field
+use Magento\Config\Block\System\Config\Form\Field;
+use Magento\Framework\Data\Form\Element\AbstractElement;
+
+class Webshopsecret extends Field
 {
     /**
-     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
+     * @param AbstractElement $element
      * @return string
      */
-    public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
+    public function render(AbstractElement $element)
     {
         $element->setReadonly(1);
         return parent::render($element);

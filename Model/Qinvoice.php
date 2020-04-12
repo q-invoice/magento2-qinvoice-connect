@@ -5,6 +5,8 @@
 
 namespace Qinvoice\Connect\Model;
 
+use Magento\Store\Model\ScopeInterface;
+
 class Qinvoice
 {
 
@@ -54,14 +56,22 @@ class Qinvoice
 
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeInterface
-    )
-    {
+    ) {
 
-        $this->username = $scopeInterface->getValue('invoice_options/invoice/api_username', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        $this->password = $scopeInterface->getValue('invoice_options/invoice/api_password', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $this->username = $scopeInterface->getValue(
+            'invoice_options/invoice/api_username',
+            ScopeInterface::SCOPE_STORE
+        );
+        $this->password = $scopeInterface->getValue(
+            'invoice_options/invoice/api_password',
+            ScopeInterface::SCOPE_STORE
+        );
         $this->recurring = 'none';
 
-        $apiURL = $scopeInterface->getValue('invoice_options/invoice/api_url', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $apiURL = $scopeInterface->getValue(
+            'invoice_options/invoice/api_url',
+            ScopeInterface::SCOPE_STORE
+        );
         // GETTING API URL
         $this->gateway = $apiURL;
     }
@@ -123,7 +133,8 @@ class Qinvoice
         return $data;
     }
 
-    public function setDocumentType($type){
+    public function setDocumentType($type)
+    {
         $this->document_type = $type;
     }
     private function buildXML()
@@ -160,7 +171,9 @@ class Qinvoice
                             <recurring><![CDATA[' . $this->recurring . ']]></recurring>
                             <remark><![CDATA[' . $this->remark . ']]></remark>
                             <layout><![CDATA[' . $this->layout . ']]></layout>
-                            <paid method="'. $this->payment_method .'" label="'. $this->payment_method_label .'"><![CDATA[' . $this->paid . ']]></paid>
+                            <paid method="'. $this->payment_method .'" label="'. $this->payment_method_label .'">
+                            <![CDATA[' . $this->paid . ']]>
+                            </paid>
                             <action><![CDATA[' . $this->action . ']]></action>
                             <saverelation><![CDATA[' . $this->saverelation . ']]></saverelation>
                             <calculation_method><![CDATA[' . $this->calculation_method . ']]></calculation_method>

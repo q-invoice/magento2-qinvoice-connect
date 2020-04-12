@@ -5,12 +5,12 @@
 
 namespace Qinvoice\Connect\Model\Config\Source;
 
-
 use \Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\DataObject;
+use Magento\Framework\Option\ArrayInterface;
 use \Magento\Payment\Model\Config;
 
-class Paymentmethod extends \Magento\Framework\DataObject
-    implements \Magento\Framework\Option\ArrayInterface
+class Paymentmethod extends DataObject implements ArrayInterface
 {
     /**
      * @var ScopeConfigInterface
@@ -28,8 +28,7 @@ class Paymentmethod extends \Magento\Framework\DataObject
     public function __construct(
         ScopeConfigInterface $appConfigScopeConfigInterface,
         Config $paymentModelConfig
-    )
-    {
+    ) {
 
         $this->_appConfigScopeConfigInterface = $appConfigScopeConfigInterface;
         $this->_paymentModelConfig = $paymentModelConfig;
@@ -38,14 +37,14 @@ class Paymentmethod extends \Magento\Framework\DataObject
     public function toOptionArray()
     {
         $payments = $this->_paymentModelConfig->getActiveMethods();
-        $methods = array();
+        $methods = [];
         foreach ($payments as $paymentCode => $paymentModel) {
             $paymentTitle = $this->_appConfigScopeConfigInterface
                 ->getValue('payment/' . $paymentCode . '/title');
-            $methods[$paymentCode] = array(
+            $methods[$paymentCode] = [
                 'label' => $paymentTitle,
                 'value' => $paymentCode,
-            );
+            ];
         }
         return $methods;
     }

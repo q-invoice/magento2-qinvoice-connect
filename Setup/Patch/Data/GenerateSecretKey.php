@@ -5,7 +5,6 @@
 
 namespace Qinvoice\Connect\Setup\Patch\Data;
 
-
 use Magento\Framework\App\Config\ConfigResource\ConfigInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Math\Random;
@@ -61,7 +60,8 @@ class GenerateSecretKey implements DataPatchInterface
 
         if (!$this->scopeConfig->getValue(self::SECRET_KEY_CONFIG_PATH)) {
             $this->configWriter->saveConfig(
-                self::SECRET_KEY_CONFIG_PATH, $this->random->getRandomString(32)
+                self::SECRET_KEY_CONFIG_PATH,
+                $this->random->getRandomString(32)
             );
         }
 

@@ -5,14 +5,15 @@
 
 namespace Qinvoice\Connect\Model\Config\Source;
 
-class Attribute implements \Magento\Framework\Option\ArrayInterface
+use Magento\Catalog\Model\Product;
+use Magento\Framework\Option\ArrayInterface;
+
+class Attribute implements ArrayInterface
 {
     public function __construct(
-        \Magento\Catalog\Model\Product $product
-    )
-    {
+        Product $product
+    ) {
         $this->product = $product;
-
     }
 
     public function toOptionArray()
