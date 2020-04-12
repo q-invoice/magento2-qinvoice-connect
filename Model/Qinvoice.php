@@ -7,6 +7,7 @@ namespace Qinvoice\Connect\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
+use Qinvoice\Connect\Service\DebugService;
 use Zend\Http\Client\Adapter\Curl;
 use Zend\Http\ClientFactory;
 
@@ -57,24 +58,48 @@ class Qinvoice
     private $files = [];
     private $recurring;
 
+    /**
+     * @var ClientFactory
+     */
     private $httpClientFactory;
 
+    /**
+     * @var ScopeConfigInterface
+     */
+    private $scopeInterface;
+
+    /**
+     * @var DebugService
+     */
+    private $debugService;
+
+    /**
+     * Qinvoice constructor.
+     * @param ScopeConfigInterface $scopeInterface
+     * @param ClientFactory $httpClientFactory
+     * @param DebugService $debugService
+     */
     public function __construct(
         ScopeConfigInterface $scopeInterface,
-        ClientFactory $httpClientFactory
+        ClientFactory $httpClientFactory,
+        DebugService $debugService
     ) {
         $this->httpClientFactory = $httpClientFactory;
-        $this->username = $scopeInterface->getValue(
+        $this->scopeInterface = $scopeInterface;
+        $this->debugService = $debugService;
+
+        /** @TODO Clean up constructor. It shouldn't contain anything except dependencies */
+        $this->username = $this->scopeInterface->getValue(
             'invoice_options/invoice/api_username',
             ScopeInterface::SCOPE_STORE
         );
-        $this->password = $scopeInterface->getValue(
+        $this->password = $this->scopeInterface->getValue(
             'invoice_options/invoice/api_password',
             ScopeInterface::SCOPE_STORE
         );
         $this->recurring = 'none';
 
-        $apiURL = $scopeInterface->getValue(
+        $apiURL = $this->scopeInterface->getValue(
             'invoice_options/invoice/api_url',
             ScopeInterface::SCOPE_STORE
         );
@@ -147,6 +172,8 @@ class Qinvoice
             'timeout' => 120
         ];
         $client->setOptions($options);
+
+        $this->debugService->logQInvoiceRequest($request);
 
         $response = $client->send($request);
 

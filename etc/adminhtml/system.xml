@@ -81,6 +81,11 @@
                     <frontend_model>Qinvoice\Connect\Block\System\Config\Form\Field\Webshopsecret</frontend_model>
                     <comment><![CDATA[Your secret key. Used for inventory synchronisation.]]></comment>
                 </field>
+                <field id="debug_mode" translate="label" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Debug mode</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Should be disable on production</comment>
+                </field>
             </group>
         </section>
     </system>
