@@ -61,7 +61,6 @@ class Qinvoice
     private $recurring;
     private $payment = false;
 
-
     /**
      * @var ClientFactory
      */
@@ -116,7 +115,8 @@ class Qinvoice
         $this->tags[] = $tag;
     }
 
-    public function addPayment($amount, $method, $transaction_id, $currency = 'EUR', $date = '', $description = ''){
+    public function addPayment($amount, $method, $transaction_id, $currency = 'EUR', $date = '', $description = '')
+    {
         $this->payment = new StdClass();
         $this->payment->amount = $amount;
         $this->payment->method = $method;
@@ -125,7 +125,6 @@ class Qinvoice
         $this->payment->description = $description;
         $this->payment->date = $date == '' ? Date('Y-m-d') : $date;
     }
-
 
     public function setLayout($code)
     {
@@ -181,7 +180,8 @@ class Qinvoice
             'curloptions' => [
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_RETURNTRANSFER => true
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POSTFIELDS => $content
             ]
             ,
             'timeout' => 120
@@ -191,7 +191,6 @@ class Qinvoice
         $this->debugService->logQInvoiceRequest($request);
 
         $response = $client->send($request);
-
 
         return $response->getContent();
     }
@@ -265,9 +264,9 @@ class Qinvoice
             </item>';
         }
 
-        $string .= '</items>';
+        $string .= '</items>' ;
 
-        if($this->payment != false){
+        if ($this->payment != false) {
             $string .= '<payment>
 								    <transaction_id><![CDATA['. $this->payment->transaction_id .']]></transaction_id>
 								    <currency><![CDATA['. $this->payment->currency .']]></currency>

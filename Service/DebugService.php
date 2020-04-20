@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Qinvoice\Connect\Service;
-
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Psr\Log\LoggerInterface;
