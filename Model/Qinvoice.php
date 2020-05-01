@@ -85,7 +85,8 @@ class Qinvoice
     public function __construct(
         ScopeConfigInterface $scopeInterface,
         ClientFactory $httpClientFactory,
-        DebugService $debugService
+        DebugService $debugService,
+        \Magento\Framework\Convert\ConvertArray $convertArray
     ) {
         $this->httpClientFactory = $httpClientFactory;
         $this->scopeInterface = $scopeInterface;
@@ -167,8 +168,7 @@ class Qinvoice
         $request->setUri($this->gateway);
         $request->setMethod(\Zend\Http\Request::METHOD_GET);
 
-        $content = "<?xml version='1.0' encoding='UTF-8'?>";
-        $content .= $this->buildXML();
+        $content = $this->buildXML();
 
         $request->setContent($content);
 
@@ -201,7 +201,8 @@ class Qinvoice
     }
     private function buildXML()
     {
-        $string = '<request>
+        $string = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+        $string .= '<request>
                         <login mode="new'. ucfirst($this->document_type) .'">
                             <username><![CDATA[' . $this->username . ']]></username>
                             <password><![CDATA[' . $this->password . ']]></password>
@@ -284,6 +285,8 @@ class Qinvoice
         $string .= '</files>
                 </'. $this->document_type .'>
             </request>';
+        file_put_contents('/app/old.xml', $string); die();
+
         return $string;
     }
 }

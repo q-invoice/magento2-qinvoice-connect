@@ -55,8 +55,6 @@ class Connect
         );
         $paid_remark = '';
 
-        $arrData = [];
-
         if ($isPaid) {
             // GETTING API URL
             $paid_remark = $this->_scopeConfig->getValue(
@@ -78,14 +76,6 @@ class Connect
 //                sprintf('Payment for %d', $order->getIncrementId())
 //            );
 
-        }
-
-        foreach ($order->getAllVisibleItems() as $row) {
-            if ($row->getParentItemId()) {
-                continue;
-            }
-
-            $arrData[] = $row->getData();
         }
 
         // GETTING LAYOUT CODE
@@ -182,6 +172,16 @@ class Connect
 
         foreach ($attributes as $attribute) {
             $attributeArray[$attribute->getData('attribute_code')] = $attribute->getData('frontend_label');
+        }
+
+        $arrData = [];
+
+        foreach ($order->getAllVisibleItems() as $row) {
+            if ($row->getParentItemId()) {
+                continue;
+            }
+
+            $arrData[] = $row->getData();
         }
 
         $cnt = count($arrData);

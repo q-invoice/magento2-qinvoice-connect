@@ -31,7 +31,27 @@ class Call
     private $version = '2.3.0';
 
     protected $_logger;
+    /**
+     * @var RequestFactory
+     */
+    private $documentFactory;
 
+    /**
+     * Call constructor.
+     * @param Connect $connect
+     * @param ScopeConfigInterface $scopeInterface
+     * @param StoreManagerInterface $storeManager
+     * @param Http $request
+     * @param Product $product
+     * @param ProductFactory $productFactory
+     * @param StockItemRepository $stockItemRepository
+     * @param CollectionFactory $productCollectionFactory
+     * @param Calculation $calculation
+     * @param StockRegistryInterface $stockRegistry
+     * @param JsonFactory $resultJsonFactory
+     * @param LoggerInterface $logger
+     * @param RequestFactory $documentFactory
+     */
     public function __construct(
         Connect $connect,
         ScopeConfigInterface $scopeInterface,
@@ -44,7 +64,8 @@ class Call
         Calculation $calculation,
         StockRegistryInterface $stockRegistry,
         JsonFactory $resultJsonFactory,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        RequestFactory $documentFactory
     ) {
         $this->_scopeConfig = $scopeInterface;
         $this->_storeManager = $storeManager;
@@ -58,6 +79,7 @@ class Call
         $this->_stockItemRepository = $stockItemRepository;
         $this->resultJsonFactory        = $resultJsonFactory;
         $this->_logger = $logger;
+        $this->documentFactory = $documentFactory;
     }
 
     public function qinvoiceCall()
@@ -283,6 +305,7 @@ class Call
         $payment = $order->getPayment();
 
         if (in_array($payment->getMethod(), $order_triggers)) {
+            $this->documentFactory->createDocumentFromOrder($order, false);
             $this->_connect->createInvoiceForQinvoice($order, false);
         }
     }
@@ -301,6 +324,7 @@ class Call
         $payment = $order->getPayment();
 
         if (in_array($payment->getMethod(), $invoice_triggers)) {
+            $this->documentFactory->createDocumentFromOrder($order, true);
             $this->_connect->createInvoiceForQinvoice($order, true);
         }
     }
