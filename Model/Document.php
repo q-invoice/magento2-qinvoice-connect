@@ -32,4 +32,13 @@ class Document
         $this->items[$key] = $value;
         return $this;
     }
+
+    /**
+     * @param $key
+     * @return array
+     */
+    public function getItem($key)
+    {
+        return isset($this->items[$key]) ? $this->items[$key] : [];
+    }
 }

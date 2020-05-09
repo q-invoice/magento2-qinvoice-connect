@@ -47,9 +47,9 @@ class RequestFactory
     public function createDocumentFromOrder($order, $isPaid = false)
     {
         $qInvoice = $this->documentFactory->create();
-        /** @var ModifierInterface $modefier */
+        /** @var ModifierInterface $modifier */
         foreach ($this->modifiers as $modifier) {
-            $modifier->modify($qInvoice);
+            $modifier->modify($qInvoice, $order, $isPaid);
         }
         $xml = $this->convertArray->assocToXml($qInvoice->getItems(), $qInvoice::ROOT_NAME);
         file_put_contents('/app/new.xml', htmlspecialchars_decode($xml->asXML()));

@@ -5,6 +5,7 @@
 
 namespace Qinvoice\Connect\Api;
 
+use Magento\Sales\Api\Data\OrderInterface;
 use Qinvoice\Connect\Model\Document;
 
 /**
@@ -16,5 +17,5 @@ interface ModifierInterface
      * @param Document $document
      * @return Document
      */
-    public function modify(Document $document);
+    public function modify(Document $document, OrderInterface $order, $isPaid = false);
 }

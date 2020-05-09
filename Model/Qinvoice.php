@@ -209,7 +209,6 @@ class Qinvoice
                             <identifier><![CDATA[Magento_2.2.3]]></identifier>
                         </login>
                         <'. $this->document_type .'>
-                            <date><![CDATA[' . $this->date . ']]></date>
                             <reference><![CDATA[' . $this->reference . ']]></reference>
                             <companyname><![CDATA[' . $this->companyname . ']]></companyname>
                             <firstname><![CDATA[' . $this->firstname . ']]></firstname>
@@ -217,12 +216,10 @@ class Qinvoice
                             <email><![CDATA[' . $this->email . ']]></email>
                             <phone><![CDATA[' . $this->phone . ']]></phone>
                             <address><![CDATA[' . $this->address . ']]></address>
-                            <address><![CDATA[' . $this->address2 . ']]></address>
                             <zipcode><![CDATA[' . $this->zipcode . ']]></zipcode>
                             <city><![CDATA[' . $this->city . ']]></city>
                             <country><![CDATA[' . $this->country . ']]></country>
 
-                            <date><![CDATA[' . $this->date . ']]></date>
                             <delivery_companyname><![CDATA[' . $this->delivery_companyname . ']]></delivery_companyname>
                             <delivery_firstname><![CDATA[' . $this->delivery_firstname . ']]></delivery_firstname>
                             <delivery_lastname><![CDATA[' . $this->delivery_lastname . ']]></delivery_lastname>

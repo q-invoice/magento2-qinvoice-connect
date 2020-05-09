@@ -6,6 +6,7 @@
 namespace Qinvoice\Connect\Model\Modifiers;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Store\Model\ScopeInterface;
 use Qinvoice\Connect\Api\ModifierInterface;
 use Qinvoice\Connect\Model\Document;
@@ -16,8 +17,8 @@ class LoginModifier implements ModifierInterface
     const DOCUMENT_TYPE_CONFIG_KEY = 'invoice_options/invoice/document_type';
     const API_USERNAME_CONFIG_KEY = 'invoice_options/invoice/api_username';
     const API_PASSWORD_CONFIG_KEY = 'invoice_options/invoice/api_password';
-
     const IDENTIFIER = 'Magento_2.2.3';
+    const PARENT_NODE = "login";
 
     /**
      * @var ScopeConfigInterface
@@ -36,9 +37,11 @@ class LoginModifier implements ModifierInterface
 
     /**
      * @param Document $document
+     * @param OrderInterface $order
+     * @param bool $isPaid
      * @return Document
      */
-    public function modify(Document $document)
+    public function modify(Document $document, OrderInterface $order, $isPaid = false)
     {
         $documentType = $this->scopeConfig->getValue(
             self::DOCUMENT_TYPE_CONFIG_KEY,
@@ -63,7 +66,7 @@ class LoginModifier implements ModifierInterface
             'identifier' => $this->addCDATA(self::IDENTIFIER),
         ];
 
-        $document->addItem('login', $login);
+        $document->addItem(self::PARENT_NODE, $login);
         return $document;
     }
 }
