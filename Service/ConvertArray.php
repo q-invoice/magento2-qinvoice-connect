@@ -7,16 +7,9 @@ namespace Qinvoice\Connect\Service;
 
 use Magento\Framework\Exception\LocalizedException;
 
-/**
- * Class ConvertArray
- * @package Qinvoice\Connect\Service
- */
 class ConvertArray
 {
     /**
-     * Transform an assoc array to \SimpleXMLElement object
-     * Array has some limitations. Appropriate exceptions will be thrown
-     *
      * @param array $array
      * @param string $rootName
      * @return \SimpleXMLElement

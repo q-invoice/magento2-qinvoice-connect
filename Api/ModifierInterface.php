@@ -9,7 +9,6 @@ use Qinvoice\Connect\Model\Document;
 
 /**
  * Interface ModifierInterface
- * @package Qinvoice\Connect\Api
  */
 interface ModifierInterface
 {

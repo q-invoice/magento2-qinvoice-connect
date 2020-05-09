@@ -10,10 +10,6 @@ use Magento\Store\Model\ScopeInterface;
 use Qinvoice\Connect\Api\ModifierInterface;
 use Qinvoice\Connect\Model\Document;
 
-/**
- * Class LoginModifier
- * @package Qinvoice\Connect\Model\Modifiers
- */
 class LoginModifier implements ModifierInterface
 {
     use AddCdata;

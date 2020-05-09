@@ -9,10 +9,6 @@ use Qinvoice\Connect\Api\ModifierInterface;
 use Qinvoice\Connect\Model\DocumentFactory;
 use Qinvoice\Connect\Service\ConvertArray;
 
-/**
- * Class RequestFactory
- * @package Qinvoice\Connect\Model
- */
 class RequestFactory
 {
     /**

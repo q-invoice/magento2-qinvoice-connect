@@ -7,10 +7,6 @@ namespace Qinvoice\Connect\Model;
 
 use Magento\Framework\DataObject;
 
-/**
- * Class Document
- * @package Qinvoice\Connect\Model
- */
 class Document
 {
     const ROOT_NAME = "request";

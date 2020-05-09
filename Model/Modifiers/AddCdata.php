@@ -6,7 +6,6 @@ namespace Qinvoice\Connect\Model\Modifiers;
 
 /**
  * Trait AddCdata
- * @package Qinvoice\Connect\Model\Modifiers
  */
 trait AddCdata
 {

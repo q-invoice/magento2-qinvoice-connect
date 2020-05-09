@@ -37,7 +37,8 @@ class MultisafepayConfigIntegration
         $this->moduleManager = $moduleManager;
     }
 
-    public function addActiveMethods($methods) {
+    public function addActiveMethods($methods)
+    {
         if ($this->moduleManager->isEnabled('MultiSafepay_Connect') === false) {
             return $methods;
         }

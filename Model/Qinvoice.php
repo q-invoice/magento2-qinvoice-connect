@@ -285,7 +285,8 @@ class Qinvoice
         $string .= '</files>
                 </'. $this->document_type .'>
             </request>';
-        file_put_contents('/app/old.xml', $string); die();
+        file_put_contents('/app/old.xml', $string);
+        die();
 
         return $string;
     }
