@@ -5,4 +5,11 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Qinvoice\Connect\Model\RequestFactory">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="login" xsi:type="object">Qinvoice\Connect\Model\Modifiers\LoginModifier</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

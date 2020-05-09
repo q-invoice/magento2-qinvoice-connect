@@ -1,26 +1,39 @@
 <?php
+/**
+ * Copyright ©q-invoice B.V.. All rights reserved.
+ */
 
 namespace Qinvoice\Connect\Model;
 
 use Magento\Framework\DataObject;
 
+/**
+ * Class Document
+ * @package Qinvoice\Connect\Model
+ */
 class Document
 {
     const ROOT_NAME = "request";
 
+    /** @var array  */
+    private $items = [];
+
     /**
      * @return array
      */
-    public function toArray()
+    public function getItems()
     {
-        $arr = [];
-        $arr['items'] = [
-            "name" => "Cocococ!",
-            "price" => "Blablabla!",
-            "@attributes" => [
-                "name" => "coll name"
-            ],
-        ];
-        return $arr;
+        return $this->items;
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     * @return $this
+     */
+    public function addItem($key, $value)
+    {
+        $this->items[$key] = $value;
+        return $this;
     }
 }

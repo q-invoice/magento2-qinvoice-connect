@@ -1,10 +1,18 @@
 <?php
+/**
+ * Copyright ©q-invoice B.V.. All rights reserved.
+ */
 
 namespace Qinvoice\Connect\Model;
 
-use Magento\Elasticsearch\SearchAdapter\DocumentFactory;
-use Magento\Framework\Convert\ConvertArray;
+use Qinvoice\Connect\Api\ModifierInterface;
+use Qinvoice\Connect\Model\DocumentFactory;
+use Qinvoice\Connect\Service\ConvertArray;
 
+/**
+ * Class RequestFactory
+ * @package Qinvoice\Connect\Model
+ */
 class RequestFactory
 {
     /**
@@ -15,13 +23,25 @@ class RequestFactory
      * @var ConvertArray
      */
     private $convertArray;
+    /**
+     * @var array
+     */
+    private $modifiers;
 
+    /**
+     * RequestFactory constructor.
+     * @param \Qinvoice\Connect\Model\DocumentFactory $documentFactory
+     * @param ConvertArray $convertArray
+     * @param array $modifiers
+     */
     public function __construct(
         DocumentFactory $documentFactory,
-        ConvertArray $convertArray
+        ConvertArray $convertArray,
+        $modifiers = []
     ) {
         $this->documentFactory = $documentFactory;
         $this->convertArray = $convertArray;
+        $this->modifiers = $modifiers;
     }
 
     /**
@@ -31,7 +51,11 @@ class RequestFactory
     public function createDocumentFromOrder($order, $isPaid = false)
     {
         $qInvoice = $this->documentFactory->create();
-        $xml = $this->convertArray->assocToXml($qInvoice->toArray(), $qInvoice::ROOT_NAME);
-        file_put_contents('/app/new.xml', $xml->asXML());
+        /** @var ModifierInterface $modefier */
+        foreach ($this->modifiers as $modifier) {
+            $modifier->modify($qInvoice);
+        }
+        $xml = $this->convertArray->assocToXml($qInvoice->getItems(), $qInvoice::ROOT_NAME);
+        file_put_contents('/app/new.xml', htmlspecialchars_decode($xml->asXML()));
     }
 }
