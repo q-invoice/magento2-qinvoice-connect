@@ -33,7 +33,7 @@ class BillingAddressModifier implements ModifierInterface
         $invoice['zipcode'] = $this->addCDATA($billingAddress->getPostcode());
         $invoice['city'] = $this->addCDATA($billingAddress->getCity());
         $invoice['country'] = $this->addCDATA($billingAddress->getCountryId());
-
+        $invoice['var'] = $this->addCDATA($billingAddress->getVatId());
         return $document->addItem(self::PARENT_NODE, $invoice);
     }
 }

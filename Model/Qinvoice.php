@@ -224,7 +224,6 @@ class Qinvoice
                             <delivery_firstname><![CDATA[' . $this->delivery_firstname . ']]></delivery_firstname>
                             <delivery_lastname><![CDATA[' . $this->delivery_lastname . ']]></delivery_lastname>
                             <delivery_address><![CDATA[' . $this->delivery_address . ']]></delivery_address>
-                            <delivery_address><![CDATA[' . $this->delivery_address2 . ']]></delivery_address>
                             <delivery_zipcode><![CDATA[' . $this->delivery_zipcode . ']]></delivery_zipcode>
                             <delivery_city><![CDATA[' . $this->delivery_city . ']]></delivery_city>
                             <delivery_country><![CDATA[' . $this->delivery_country . ']]></delivery_country>

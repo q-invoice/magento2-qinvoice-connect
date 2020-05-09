@@ -24,6 +24,7 @@ class InvoiceModifier implements ModifierInterface
     {
         $invoice = $document->getItem(self::PARENT_NODE);
         $invoice['reference'] = $this->addCDATA($order->getIncrementId());
+        $invoice['recurring'] = $this->addCDATA("none");
         return $document->addItem(self::PARENT_NODE, $invoice);
     }
 }
