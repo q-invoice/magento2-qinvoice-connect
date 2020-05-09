@@ -22,16 +22,27 @@ class Paymentmethod extends DataObject implements ArrayInterface
     protected $_paymentModelConfig;
 
     /**
+     * @var MultisafepayConfigIntegration
+     */
+    private $multisafepayConfigIntegration;
+
+    /**
+     * Paymentmethod constructor.
      * @param ScopeConfigInterface $appConfigScopeConfigInterface
      * @param Config $paymentModelConfig
+     * @param MultisafepayConfigIntegration $multisafepayConfigIntegration
+     * @param array $data
      */
     public function __construct(
         ScopeConfigInterface $appConfigScopeConfigInterface,
-        Config $paymentModelConfig
+        Config $paymentModelConfig,
+        \Qinvoice\Connect\Model\Config\Source\MultisafepayConfigIntegration $multisafepayConfigIntegration,
+        $data = []
     ) {
-
+        parent::__construct($data);
         $this->_appConfigScopeConfigInterface = $appConfigScopeConfigInterface;
         $this->_paymentModelConfig = $paymentModelConfig;
+        $this->multisafepayConfigIntegration = $multisafepayConfigIntegration;
     }
 
     public function toOptionArray()
@@ -46,6 +57,9 @@ class Paymentmethod extends DataObject implements ArrayInterface
                 'value' => $paymentCode,
             ];
         }
+
+        $methods = $this->multisafepayConfigIntegration->addActiveMethods($methods);
+
         return $methods;
     }
 }
