@@ -12,6 +12,7 @@
                 <item name="invoice" xsi:type="object">Qinvoice\Connect\Model\Modifiers\InvoiceModifier</item>
                 <item name="invoiceBillingAddress" xsi:type="object">Qinvoice\Connect\Model\Modifiers\BillingAddressModifier</item>
                 <item name="invoiceShippingAddress" xsi:type="object">Qinvoice\Connect\Model\Modifiers\ShippingAddressModifier</item>
+                <item name="invoiceItemes" xsi:type="object">Qinvoice\Connect\Model\Modifiers\InvoiceItemMofedier</item>
             </argument>
         </arguments>
     </type>

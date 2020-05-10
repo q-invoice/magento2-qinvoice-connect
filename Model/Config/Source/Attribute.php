@@ -22,7 +22,7 @@ class Attribute implements ArrayInterface
         $attributeArray = [];
 
         foreach ($attributes as $attribute) {
-            $attributeArray[] = ['value' => $attribute->getFrontendLabel(), 'label' => $attribute->getAttributeCode()];
+            $attributeArray[] = ['value' => $attribute->getAttributeCode(), 'label' => $attribute->getAttributeCode()];
         }
         return $attributeArray;
     }
