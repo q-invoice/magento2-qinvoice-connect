@@ -38,7 +38,6 @@ class Call
 
     /**
      * Call constructor.
-     * @param Connect $connect
      * @param ScopeConfigInterface $scopeInterface
      * @param StoreManagerInterface $storeManager
      * @param Http $request
@@ -53,7 +52,6 @@ class Call
      * @param RequestFactory $documentFactory
      */
     public function __construct(
-        Connect $connect,
         ScopeConfigInterface $scopeInterface,
         StoreManagerInterface $storeManager,
         Http $request,
@@ -72,7 +70,6 @@ class Call
         $this->_request = $request;
         $this->_product = $product;
         $this->_productFactory = $productFactory;
-        $this->_connect = $connect;
         $this->_stockRegistry = $stockRegistry;
         $this->_productCollectionFactory = $productCollectionFactory;
         $this->_calculation = $calculation;
