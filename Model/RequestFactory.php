@@ -43,6 +43,8 @@ class RequestFactory
     /**
      * @param $order
      * @param bool $isPaid
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function createDocumentFromOrder($order, $isPaid = false)
     {
@@ -52,6 +54,6 @@ class RequestFactory
             $modifier->modify($qInvoice, $order, $isPaid);
         }
         $xml = $this->convertArray->assocToXml($qInvoice->getItems(), $qInvoice::ROOT_NAME);
-        file_put_contents('/app/new.xml', htmlspecialchars_decode($xml->asXML()));
+        return htmlspecialchars_decode($xml->asXML());
     }
 }

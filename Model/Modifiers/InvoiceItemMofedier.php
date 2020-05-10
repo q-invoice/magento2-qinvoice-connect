@@ -117,7 +117,7 @@ class InvoiceItemMofedier implements ModifierInterface
             $itemData['price_incl'] = $orderItem->getBasePriceInclTax() * 100;
             $itemData['price_vat'] = $orderItem->getBaseTaxAmount()/$orderItem->getQtyOrdered() * 100;
             $itemData['vatpercentage'] = $orderItem->getTaxPercent() * 100;
-            $itemData['discount']  = $orderItem->getBaseDiscountAmount() * 100;
+            $itemData['discount']  = 0;
             $itemData['categories']  = $this->addCDATA('');
             $items[] = $itemData;
 
