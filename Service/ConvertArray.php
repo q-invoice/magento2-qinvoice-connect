@@ -70,6 +70,18 @@ XML;
                     $hasNumericKey = true;
                     $xml->addChild($key, $value);
                 }
+            } elseif (is_array($value)
+                && in_array('@attributes', array_keys($value))
+                && in_array('@value', array_keys($value))
+            ) {
+                if (is_array($value['@value'])) {
+                    self::_assocToXml($value['@value'], $key, $xml->{$key});
+                } else {
+                    $xml->addChild($key, $value['@value']);
+                }
+                foreach ($value['@attributes'] as $aKey => $aValue) {
+                    $xml->{$key}->addAttribute($aKey, $aValue);
+                }
             } elseif (is_array($value) && $key === '@attributes') {
                 foreach ($value as $aKey => $aValue) {
                     $xml->addAttribute($aKey, $aValue);

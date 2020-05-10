@@ -17,6 +17,7 @@ class InvoiceModifier implements ModifierInterface
     const PARENT_NODE = "invoice";
     const INVOICE_REMARK_CONFIG_KEY =  'invoice_options/invoice/invoice_remark';
     const INVOICE_PAID_REMARK_CONFIG_KEY =  'invoice_options/invoice/paid_remark';
+    const INVOICE_LAYOUT_CODE =  'invoice_options/invoice/layout_code';
 
     /**
      * @var ScopeConfigInterface
@@ -45,6 +46,8 @@ class InvoiceModifier implements ModifierInterface
         $invoice['date'] = $this->addCDATA($order->getCreatedAt());
         $invoice['recurring'] = $this->addCDATA("none");
         $invoice['remark'] = $this->addCDATA($this->getRemark($order, $isPaid));
+        $invoice['layout'] = $this->addCDATA($this->getLayout());
+        $invoice['paid'] = $this->getPaid($order, $isPaid);
 
         return $document->addItem(self::PARENT_NODE, $invoice);
     }
@@ -67,5 +70,27 @@ class InvoiceModifier implements ModifierInterface
         }
 
         return $document_remark . "\n" . $paid_remark;
+    }
+
+    private function getLayout()
+    {
+        $layout_code = $this->scopeConfig->getValue(
+            self::INVOICE_LAYOUT_CODE,
+            ScopeInterface::SCOPE_STORE
+        );
+
+        return isset($layout_code['default']) ? $layout_code['default'] : '';
+    }
+
+    private function getPaid($order, $isPaid)
+    {
+        $payment = $order->getPayment();
+        return [
+            '@value' => $this->addCDATA($isPaid ? 1 : 0),
+            '@attributes' => [
+                'method' => $payment->getMethod(),
+                'label' => $payment->getMethodInstance()->getTitle(),
+            ],
+        ];
     }
 }
