@@ -43,7 +43,11 @@ class InvoiceItemMofedier implements ModifierInterface
     {
         $invoice = $document->getItem(self::PARENT_NODE);
 
-        $items = $this->getItems($order);
+        $items = $this->getOrderItems($order);
+
+        if ($order->getShippingAmount() > 0) {
+            $items[] = $this->getShipmentItem($order);
+        }
 
         $invoice['items'] = [
             '@array' => [
@@ -54,7 +58,7 @@ class InvoiceItemMofedier implements ModifierInterface
         return $document->addItem(self::PARENT_NODE, $invoice);
     }
 
-    private function getItems(OrderInterface $order)
+    private function getOrderItems(OrderInterface $order)
     {
         $productAttributes = $this->scopeConfig->getValue(
             'invoice_options/invoice/product_attributes',
@@ -118,5 +122,20 @@ class InvoiceItemMofedier implements ModifierInterface
         }
 
         return $items;
+    }
+
+    private function getShipmentItem($order)
+    {
+        return [
+            'code' => 'SHPMNT',
+            'description' => trim($order->getShippingDescription()),
+            'price' => $order->getShippingAmount() * 100,
+            'price_incl' => $order->getShippingInclTax() * 100,
+            'price_vat' => $order->getShippingTaxAmount() * 100,
+            'vatpercentage' => round(($order->getShippingTaxAmount() / $order->getShippingAmount()) * 100) * 100,
+            'discount' => 0,
+            'quantity' => 100,
+            'categories' => 'shipping',
+        ];
     }
 }
