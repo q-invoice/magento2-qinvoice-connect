@@ -49,6 +49,10 @@ class InvoiceItemMofedier implements ModifierInterface
             $items[] = $this->getShipmentItem($order);
         }
 
+        if ($order->getCouponCode()) {
+            $items[] = $this->getCouponItem($order);
+        }
+
         $invoice['items'] = [
             '@array' => [
                 '@key' => 'item',
@@ -127,15 +131,30 @@ class InvoiceItemMofedier implements ModifierInterface
     private function getShipmentItem($order)
     {
         return [
-            'code' => 'SHPMNT',
-            'description' => trim($order->getShippingDescription()),
+            'code' => $this->addCDATA('SHPMNT'),
+            'description' => $this->addCDATA(trim($order->getShippingDescription())),
             'price' => $order->getShippingAmount() * 100,
             'price_incl' => $order->getShippingInclTax() * 100,
             'price_vat' => $order->getShippingTaxAmount() * 100,
             'vatpercentage' => round(($order->getShippingTaxAmount() / $order->getShippingAmount()) * 100) * 100,
             'discount' => 0,
-            'quantity' => 100,
+            'quantity' => $this->addCDATA(100),
             'categories' => 'shipping',
+        ];
+    }
+
+    private function getCouponItem($order)
+    {
+        return [
+            'code' => $this->addCDATA('DSCNT'),
+            'description' => $this->addCDATA($order->getCouponCode()),
+            'price' => $order->getDiscountAmount() * 100,
+            'price_incl' => $order->getDiscountAmount() * 100,
+            'price_vat' => 0,
+            'vatpercentage' => 0,
+            'discount' => 0,
+            'quantity' => $this->addCDATA(-100),
+            'categories' => $this->addCDATA('discount'),
         ];
     }
 }
