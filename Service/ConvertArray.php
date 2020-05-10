@@ -71,8 +71,8 @@ XML;
                     $xml->addChild($key, $value);
                 }
             } elseif (is_array($value)
-                && in_array('@attributes', array_keys($value))
-                && in_array('@value', array_keys($value))
+                && in_array('@attributes', array_keys($value), 1)
+                && in_array('@value', array_keys($value), 1)
             ) {
                 if (is_array($value['@value'])) {
                     self::_assocToXml($value['@value'], $key, $xml->{$key});
@@ -81,6 +81,13 @@ XML;
                 }
                 foreach ($value['@attributes'] as $aKey => $aValue) {
                     $xml->{$key}->addAttribute($aKey, $aValue);
+                }
+            } elseif (is_array($value)
+                && in_array('@array', array_keys($value), 1)
+            ) {
+                $xml->addChild($key);
+                foreach ($value['@array']['@values'] as $aVal) {
+                    $xml->{$key}->addChild($value['@array']['@key'], $aVal);
                 }
             } elseif (is_array($value) && $key === '@attributes') {
                 foreach ($value as $aKey => $aValue) {

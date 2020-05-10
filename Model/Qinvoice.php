@@ -209,6 +209,7 @@ class Qinvoice
                             <identifier><![CDATA[Magento_2.2.3]]></identifier>
                         </login>
                         <'. $this->document_type .'>
+                            <date><![CDATA[' . $this->date . ']]></date>
                             <reference><![CDATA[' . $this->reference . ']]></reference>
                             <companyname><![CDATA[' . $this->companyname . ']]></companyname>
                             <firstname><![CDATA[' . $this->firstname . ']]></firstname>
