@@ -112,7 +112,7 @@ class InvoiceItemMofedier implements ModifierInterface
             $itemData = [];
             $itemData['code'] = $this->addCDATA($orderItem->getSku());
             $itemData['quantity'] = $this->addCDATA($orderItem->getQtyOrdered() * 100);
-            $itemData['discription']  = $this->addCDATA(implode("\n", $description));
+            $itemData['description']  = $this->addCDATA(implode("\n", $description));
             $itemData['price'] = $orderItem->getBasePrice() * 100;
             $itemData['price_incl'] = $orderItem->getBasePriceInclTax() * 100;
             $itemData['price_vat'] = $orderItem->getBaseTaxAmount()/$orderItem->getQtyOrdered() * 100;
