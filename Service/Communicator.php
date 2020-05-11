@@ -79,7 +79,7 @@ class Communicator
         $content = $response->getContent();
 
         if (!is_numeric($response->getContent())) {
-            throw new LocalizedException('Qinvoice Connect Error Could not send invoice for order ');
+            throw new LocalizedException(__('Qinvoice Connect Error Could not send invoice for order '));
         }
     }
 }
