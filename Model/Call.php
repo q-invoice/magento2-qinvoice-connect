@@ -6,11 +6,11 @@
 namespace Qinvoice\Connect\Model;
 
 use Exception;
-use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\CatalogInventory\Model\Stock\StockItemRepository;
+use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Controller\Result\JsonFactory;
@@ -18,9 +18,8 @@ use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Tax\Model\Calculation;
-use Psr\Log\LoggerInterface;
 
-class Call
+class Call implements ActionInterface
 {
 
     private $signature = false;
@@ -30,105 +29,94 @@ class Call
     private $message;
     private $version = '2.3.0';
 
-    protected $_logger;
-    /**
-     * @var RequestFactory
-     */
-    private $documentFactory;
-
     /**
      * Call constructor.
      * @param ScopeConfigInterface $scopeInterface
      * @param StoreManagerInterface $storeManager
      * @param Http $request
-     * @param Product $product
-     * @param ProductFactory $productFactory
      * @param StockItemRepository $stockItemRepository
      * @param CollectionFactory $productCollectionFactory
      * @param Calculation $calculation
      * @param StockRegistryInterface $stockRegistry
      * @param JsonFactory $resultJsonFactory
-     * @param LoggerInterface $logger
-     * @param RequestFactory $documentFactory
      */
     public function __construct(
         ScopeConfigInterface $scopeInterface,
         StoreManagerInterface $storeManager,
         Http $request,
-        Product $product,
-        ProductFactory $productFactory,
         StockItemRepository $stockItemRepository,
         CollectionFactory $productCollectionFactory,
         Calculation $calculation,
         StockRegistryInterface $stockRegistry,
-        JsonFactory $resultJsonFactory,
-        LoggerInterface $logger,
-        RequestFactory $documentFactory
+        JsonFactory $resultJsonFactory
     ) {
         $this->_scopeConfig = $scopeInterface;
         $this->_storeManager = $storeManager;
         $this->_request = $request;
-        $this->_product = $product;
-        $this->_productFactory = $productFactory;
         $this->_stockRegistry = $stockRegistry;
         $this->_productCollectionFactory = $productCollectionFactory;
         $this->_calculation = $calculation;
         $this->_stockItemRepository = $stockItemRepository;
         $this->resultJsonFactory        = $resultJsonFactory;
-        $this->_logger = $logger;
-        $this->documentFactory = $documentFactory;
     }
 
-    public function qinvoiceCall()
+    public function execute()
     {
 
-        if ($this->_request->getParam('qc') > '') {
+        $mode = $this->_request->getParam('qc');
 
-            $mode = $this->_request->getParam('qc');
-            if (in_array($mode, ['test', 'stock', 'export', 'stores'])) {
-
-                $this->signature = $this->_request->getParam('signature');
-                $this->nonce = $this->_request->getParam('nonce');
-
-                if (!$this->nonce || $this->nonce == '') {
-                    $this->code = "010";
-                    $this->message = 'Nonce missing.';
-                    return $this->renderJson();
-                }
-
-                if ($this->nonce < time() - 5000 && 1 == 2) {
-                    $this->code = "011";
-                    $this->message = 'Nonce expired.';
-                    return $this->renderJson();
-                }
-
-                if (!$this->signature || $this->signature == '') {
-                    $this->code = "021";
-                    $this->message = 'Signature missing.';
-                    return $this->renderJson();
-                }
-
-                switch ($mode) {
-                    case 'test':
-                        $this->checkSignature(["test"]);
-                        $this->code = "999";
-                        $this->message = 'Plugin installed.';
-                        $this->renderJson();
-                        break;
-                    case 'stock':
-                         $this->updateStock(
-                             $this->_request->getParam('sku'),
-                             $this->_request->getParam('quantity')
-                         );
-                        return '';
-                    case 'export':
-                        return $this->exportCatalog($this->_request->getParam('store_id'));
-                    case 'stores':
-                        return $this->listStores();
-                }
-                return '';
+        if (in_array($mode, ['test', 'stock', 'export', 'stores'])) {
+            $this->nonce = $this->_request->getParam('nonce');
+            if (!$this->nonce || $this->nonce == '') {
+                $this->code = "010";
+                $this->message = 'Nonce missing.';
+                return $this->renderJson();
             }
+
+            if ($this->nonce < (time() - 5000)) {
+                $this->code = "011";
+                $this->message = 'Nonce expired.';
+                return $this->renderJson();
+            }
+
+            $signature = $this->_request->getParam('signature');
+            if (!$signature || $signature == '') {
+                $this->code = "021";
+                $this->message = 'Signature missing.';
+                return $this->renderJson();
+            }
+
+            $secret = $this->_scopeConfig->getValue(
+                'invoice_options/invoice/webshop_secret',
+                ScopeInterface::SCOPE_STORE
+            );
+
+            if ($secret !== $signature) {
+                $this->code = '030';
+                $this->message = 'Invalid signature';
+                return $this->renderJson();
+            }
+
+            switch ($mode) {
+                case 'test':
+                    $this->code = "999";
+                    $this->message = 'Plugin installed.';
+                    $this->renderJson();
+                    break;
+                case 'stock':
+                    $result = $this->updateStock(
+                        $this->_request->getParam('sku'),
+                        $this->_request->getParam('quantity')
+                    );
+                    return $result;
+                case 'export':
+                    return $this->exportCatalog($this->_request->getParam('store_id'));
+                case 'stores':
+                    return $this->listStores();
+            }
+            return $this->renderJson("");
         }
+        return $this->renderJson("");
     }
 
     private function renderJson($data = null)
@@ -145,33 +133,30 @@ class Call
             ]
         );
         $jsonResult = $this->resultJsonFactory->create();
-        $jsonResult->setData($json);
+        $jsonResult->setJsonData($json);
         return $jsonResult;
     }
 
     public function updateStock($sku = '', $quantity = '')
     {
-
         if ($sku == '') {
             $this->code = '100';
             $this->message = 'SKU is missing';
-            $this->renderJson();
+            return $this->renderJson("");
         }
 
         if ($quantity == '') {
             $this->code = '101';
             $this->message = 'Quantity is missing';
-            $this->renderJson();
+            return $this->renderJson("");
         }
-
-        $this->checkSignature(["stock", $sku, $quantity]);
 
         try {
             $stockItem = $this->_stockRegistry->getStockItemBySku($sku);
         } catch (Exception $e) {
             $this->code = '102';
             $this->message = $e->getMessage();
-            $this->renderJson();
+            return $this->renderJson("");
         }
 
         $stockItem->setQty($quantity);
@@ -181,31 +166,16 @@ class Call
         } catch (Exception $e) {
             $this->code = '199';
             $this->message = $e->getMessage();
-            $this->renderJson();
+            return $this->renderJson("");
         }
 
         $this->code = '900';
         $this->message = 'Product updated successfully';
-        $this->renderJson();
-    }
-
-    private function checkSignature($params = [])
-    {
-
-        $secret = $this->_scopeConfig->getValue('invoice_options/invoice/webshop_secret', ScopeInterface::SCOPE_STORE);
-
-        if ($secret != $this->signature) {
-            $this->code = '030';
-            $this->message = 'Invalid signature';
-            return $this->renderJson();
-        }
+        return $this->renderJson("");
     }
 
     public function listStores()
     {
-
-        $this->checkSignature(["stores"]);
-
         foreach ($this->_storeManager->getStores() as $store) {
             $store_array[] = $store->getData();
         }
@@ -217,9 +187,6 @@ class Call
 
     public function exportCatalog($store_id = null)
     {
-
-        $this->checkSignature(["export", $store_id]);
-
         $products_array = [];
         $products = $this->_productCollectionFactory->create();
         $products->addAttributeToSelect('*');
@@ -284,8 +251,6 @@ class Call
 
         $this->code = '910';
         $this->message = sprintf('%d items exported', count($products_array));
-        $this->renderJson($products_array);
-
-        return '';
+        return $this->renderJson($products_array);
     }
 }
