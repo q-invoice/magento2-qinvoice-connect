@@ -4,17 +4,14 @@
  */
 namespace Qinvoice\Connect\Model\Data;
 
-use Qinvoice\Connect\Api\Data\InstallationValidatorResponseInterface;
+use Qinvoice\Connect\Api\Data\StoresResponseInterface;
 
-class InstallationValidatorResponse extends BaseResponse implements InstallationValidatorResponseInterface
+class StoresResponse extends BaseResponse implements StoresResponseInterface
 {
-    /**
-     * @var array
-     */
     private $data;
 
     /**
-     * @return array
+     * @inheritDoc
      */
     public function getData()
     {

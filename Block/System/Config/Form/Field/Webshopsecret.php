@@ -5,11 +5,42 @@
 
 namespace Qinvoice\Connect\Block\System\Config\Form\Field;
 
+use Magento\Backend\Block\Template\Context;
 use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Framework\Data\Form\Element\AbstractElement;
+use Magento\Integration\Api\IntegrationServiceInterface;
+use Magento\Integration\Model\Oauth\Token\Provider;
+use Qinvoice\Connect\Setup\Patch\Data\CreateIntegrationUser;
 
 class Webshopsecret extends Field
 {
+    /**
+     * @var IntegrationServiceInterface
+     */
+    private $integrationService;
+    /**
+     * @var Provider
+     */
+    private $tokenProdvider;
+
+    /**
+     * Webshopsecret constructor.
+     * @param Context $context
+     * @param IntegrationServiceInterface $integrationService
+     * @param Provider $tokenProdvider
+     * @param array $data
+     */
+    public function __construct(
+        Context $context,
+        IntegrationServiceInterface $integrationService,
+        Provider $tokenProdvider,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->integrationService = $integrationService;
+        $this->tokenProdvider = $tokenProdvider;
+    }
+
     /**
      * @param AbstractElement $element
      * @return string
@@ -38,6 +69,7 @@ class Webshopsecret extends Field
      */
     protected function _renderValue(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
+        $this->setIntegrationKey($element);
         if ($element->getTooltip()) {
             $html = '<td class="value with-tooltip">';
             $html .= $this->_getElementHtml($element);
@@ -54,5 +86,17 @@ class Webshopsecret extends Field
         }
         $html .= '</td>';
         return $html;
+    }
+
+    /**
+     * @param $element
+     */
+    private function setIntegrationKey($element)
+    {
+        $integration = $this->integrationService->findByName(CreateIntegrationUser::Q_INVOICE_INTEGRATION_NAME);
+        $consumerId = $integration->getConsumerId();
+        /** @var \Magento\Integration\Model\Oauth\Token $token */
+        $token = $this->tokenProdvider->getIntegrationTokenByConsumerId($consumerId);
+        $element->setValue($token->getToken());
     }
 }

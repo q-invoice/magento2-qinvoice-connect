@@ -12,4 +12,10 @@
             <resource ref="Qinvoice_Connect::base"/>
         </resources>
     </route>
+    <route url="/V1/q-invoice/stores" method="GET">
+        <service class="Qinvoice\Connect\Api\StoresInterface" method="get"/>
+        <resources>
+            <resource ref="Qinvoice_Connect::base"/>
+        </resources>
+    </route>
 </routes>

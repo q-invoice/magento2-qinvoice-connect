@@ -16,7 +16,10 @@
             </argument>
         </arguments>
     </type>
+    <preference for="Qinvoice\Connect\Api\Data\ResponseDataInterface" type="Qinvoice\Connect\Model\Data\ApiResponseData"/>
     <preference for="Qinvoice\Connect\Api\InstallationValidatorInterface" type="Qinvoice\Connect\Model\InstallationValidator"/>
     <preference for="Qinvoice\Connect\Api\Data\InstallationValidatorResponseInterface" type="Qinvoice\Connect\Model\Data\InstallationValidatorResponse"/>
-    <preference for="Qinvoice\Connect\Api\Data\ResponseDataInterface" type="Qinvoice\Connect\Model\Data\ApiResponseData"/>
+
+    <preference for="Qinvoice\Connect\Api\StoresInterface" type="Qinvoice\Connect\Model\Stores"/>
+    <preference for="Qinvoice\Connect\Api\Data\StoresResponseInterface" type="Qinvoice\Connect\Model\Data\StoresResponse"/>
 </config>
