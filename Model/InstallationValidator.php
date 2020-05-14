@@ -4,27 +4,28 @@
  */
 namespace Qinvoice\Connect\Model;
 
-use Qinvoice\Connect\Model\Data\ApiResponseDataFactory;
-use Qinvoice\Connect\Model\Data\ApiResponseFactory;
+use Qinvoice\Connect\Api\Data\InstallationValidatorResponseInterfaceFactory;
+use Qinvoice\Connect\Api\Data\ResponseDataInterfaceFactory;
 
 class InstallationValidator implements \Qinvoice\Connect\Api\InstallationValidatorInterface
 {
     /**
-     * @var ApiResponseFactory
+     * @var InstallationValidatorResponseInterfaceFactory
      */
     private $apiResponseFactory;
     /**
-     * @var ApiResponseData
+     * @var ResponseDataInterfaceFactory
      */
     private $apiResponseDataFactory;
 
     /**
      * InstallationValidator constructor.
-     * @param ApiResponseFactory $apiResponseFactory
+     * @param InstallationValidatorResponseInterfaceFactory $apiResponseFactory
+     * @param ResponseDataInterfaceFactory $apiResponseDataFactory
      */
     public function __construct(
-        ApiResponseFactory $apiResponseFactory,
-        ApiResponseDataFactory $apiResponseDataFactory
+        InstallationValidatorResponseInterfaceFactory $apiResponseFactory,
+        ResponseDataInterfaceFactory $apiResponseDataFactory
     ) {
         $this->apiResponseFactory = $apiResponseFactory;
         $this->apiResponseDataFactory = $apiResponseDataFactory;

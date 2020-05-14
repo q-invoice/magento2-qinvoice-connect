@@ -4,7 +4,7 @@
  */
 namespace Qinvoice\Connect\Model\Data;
 
-class ApiResponse implements \Qinvoice\Connect\Api\Data\ApiResponseInterface
+class InstallationValidatorResponse implements \Qinvoice\Connect\Api\Data\InstallationValidatorResponseInterface
 {
     /**
      * @var array

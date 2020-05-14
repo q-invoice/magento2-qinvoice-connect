@@ -17,6 +17,6 @@
         </arguments>
     </type>
     <preference for="Qinvoice\Connect\Api\InstallationValidatorInterface" type="Qinvoice\Connect\Model\InstallationValidator"/>
-    <preference for="Qinvoice\Connect\Api\Data\ApiResponseInterface" type="Qinvoice\Connect\Model\Data\ApiResponse"/>
+    <preference for="Qinvoice\Connect\Api\Data\InstallationValidatorResponseInterface" type="Qinvoice\Connect\Model\Data\InstallationValidatorResponse"/>
     <preference for="Qinvoice\Connect\Api\Data\ResponseDataInterface" type="Qinvoice\Connect\Model\Data\ApiResponseData"/>
 </config>

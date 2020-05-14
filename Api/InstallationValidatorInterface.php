@@ -10,7 +10,7 @@ interface InstallationValidatorInterface
     const RESPONSE_MESSAGE = "Plugin installed.";
 
     /**
-     * @return \Qinvoice\Connect\Api\Data\ApiResponseInterface
+     * @return \Qinvoice\Connect\Api\Data\InstallationValidatorResponseInterface
      */
     public function vlidate();
 }

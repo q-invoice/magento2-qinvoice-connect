@@ -4,15 +4,10 @@
  */
 namespace Qinvoice\Connect\Api\Data;
 
-interface ApiResponseInterface
+interface BaseResponseInterface
 {
     /**
      * @return \Qinvoice\Connect\Api\Data\ResponseDataInterface
      */
     public function getResponse();
-
-    /**
-     * @return array
-     */
-    public function getData();
 }
