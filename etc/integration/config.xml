@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<integrations>
+   <integration name="q-invoice">
+       <email></email>
+       <endpoint_url></endpoint_url>
+       <identity_link_url></identity_link_url>
+   </integration>
+</integrations>

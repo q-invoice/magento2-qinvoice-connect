@@ -1,0 +1,7 @@
+<integrations>
+    <integration name="q-invoice">
+        <resources>
+            <resource name="Qinvoice_Connect::base" />
+        </resources>
+    </integration>
+</integrations>

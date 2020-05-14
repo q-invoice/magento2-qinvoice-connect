@@ -11,7 +11,7 @@
                 <resource id="Magento_Backend::stores">
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">
-                            <resource id="Qinvoice_Connect::config" title="API Configuration" sortOrder="50" />
+                            <resource id="Qinvoice_Connect::base" title="Q-invoice API Configuration" sortOrder="50" />
                         </resource>
                     </resource>
                 </resource>
