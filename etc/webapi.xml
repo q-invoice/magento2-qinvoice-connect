@@ -18,4 +18,16 @@
             <resource ref="Qinvoice_Connect::base"/>
         </resources>
     </route>
+    <route url="/V1/q-invoice/export" method="GET">
+        <service class="Qinvoice\Connect\Api\ExportInterface" method="export"/>
+        <resources>
+            <resource ref="Qinvoice_Connect::base"/>
+        </resources>
+    </route>
+    <route url="/V1/q-invoice/export/store_id/:storeId" method="GET">
+        <service class="Qinvoice\Connect\Api\ExportInterface" method="export"/>
+        <resources>
+            <resource ref="Qinvoice_Connect::base"/>
+        </resources>
+    </route>
 </routes>
