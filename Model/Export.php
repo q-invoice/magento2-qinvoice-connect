@@ -1,6 +1,7 @@
 <?php
-
-
+/**
+ * Copyright ©q-invoice B.V.. All rights reserved.
+ */
 namespace Qinvoice\Connect\Model;
 
 use Magento\CatalogInventory\Model\Stock\StockItemRepository;
@@ -113,8 +114,6 @@ class Export implements ExportInterface
             $request = $this->calculation->getRateRequest(null, null, null, $store);
             $taxClassId = $product->getTaxClassId();
             $vat_percent = $this->calculation->getRate($request->setProductClassId($taxClassId));
-
-            $tier_prices = [];
 
             $tier_prices = ($product->getTierPrice());
             foreach ($tier_prices as $tp) {

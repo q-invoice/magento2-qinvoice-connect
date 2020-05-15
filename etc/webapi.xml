@@ -30,4 +30,10 @@
             <resource ref="Qinvoice_Connect::base"/>
         </resources>
     </route>
+    <route url="/V1/q-invoice/stock" method="PUT">
+        <service class="Qinvoice\Connect\Api\StockInterface" method="update"/>
+        <resources>
+            <resource ref="Qinvoice_Connect::base"/>
+        </resources>
+    </route>
 </routes>
