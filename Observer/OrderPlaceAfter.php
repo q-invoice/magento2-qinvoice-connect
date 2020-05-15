@@ -12,7 +12,6 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Qinvoice\Connect\Model\Call;
 use Qinvoice\Connect\Model\RequestFactory;
 
 class OrderPlaceAfter implements ObserverInterface
@@ -21,8 +20,6 @@ class OrderPlaceAfter implements ObserverInterface
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
-
-    protected $_call;
 
     /**
      * @var \Qinvoice\Connect\Service\Communicator
@@ -37,16 +34,13 @@ class OrderPlaceAfter implements ObserverInterface
      * OrderPlaceAfter constructor.
      * @param \Qinvoice\Connect\Service\Communicator $communicator
      * @param ScopeConfigInterface $scopeConfig
-     * @param Call $call
      */
     public function __construct(
         \Qinvoice\Connect\Service\Communicator $communicator,
         ScopeConfigInterface $scopeConfig,
-        RequestFactory $requestFactory,
-        Call $call
+        RequestFactory $requestFactory
     ) {
         $this->scopeConfig = $scopeConfig;
-        $this->_call = $call;
         $this->communicator = $communicator;
         $this->requestFactory = $requestFactory;
     }
