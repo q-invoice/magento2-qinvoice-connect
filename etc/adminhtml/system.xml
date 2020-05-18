@@ -15,10 +15,7 @@
             <resource>Qinvoice_Connect::config</resource>
             <group id="invoice" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Qinvoice</label>
-                <field id="module_version" translate="label" type="text" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Version</label>
-                    <frontend_model>Qinvoice\Connect\Block\System\Config\Form\Field\ModuleVersionField</frontend_model>
-                </field>
+
                 <field id="api_url" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>API URL</label>
                     <comment><![CDATA[e.g. https://app.q-invoice.com/api/xml/1.2/]]></comment>
@@ -89,6 +86,10 @@
                     <label>Debug mode</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Should be disable on production</comment>
+                </field>
+                <field id="module_version" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Version</label>
+                    <frontend_model>Qinvoice\Connect\Block\System\Config\Form\Field\ModuleVersionField</frontend_model>
                 </field>
             </group>
         </section>
