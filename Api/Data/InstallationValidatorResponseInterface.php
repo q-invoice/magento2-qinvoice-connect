@@ -7,7 +7,7 @@ namespace Qinvoice\Connect\Api\Data;
 interface InstallationValidatorResponseInterface extends \Qinvoice\Connect\Api\Data\BaseResponseInterface
 {
     /**
-     * @return String|Null
+     * @return string|Null
      */
     public function getData();
 }

@@ -8,10 +8,12 @@ use Magento\CatalogInventory\Model\Stock\StockItemRepository;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Tax\Model\Calculation;
+use Qinvoice\Connect\Api\Data\ExportProductDataInterfaceFactory;
 use Qinvoice\Connect\Api\Data\ExportResponseInterfaceFactory;
 use Qinvoice\Connect\Api\Data\ResponseDataInterfaceFactory;
 use Qinvoice\Connect\Api\ExportInterface;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
+use Qinvoice\Connect\Model\Data\ExportProductData;
 
 class Export implements ExportInterface
 {
@@ -40,6 +42,10 @@ class Export implements ExportInterface
      * @var StockItemRepository
      */
     private $stockItemRepository;
+    /**
+     * @var ExportProductDataInterface
+     */
+    private $exportProductDataFactory;
 
     /**
      * Export constructor.
@@ -49,6 +55,7 @@ class Export implements ExportInterface
      * @param CollectionFactory $collectionFactory
      * @param Calculation $calculation
      * @param StockItemRepository $stockItemRepository
+     * @param ExportProductDataInterface $exportProductDataFactory
      */
     public function __construct(
         ExportResponseInterfaceFactory $exportResponseFactory,
@@ -56,7 +63,8 @@ class Export implements ExportInterface
         StoreManagerInterface $storeManager,
         CollectionFactory $collectionFactory,
         Calculation $calculation,
-        StockItemRepository $stockItemRepository
+        StockItemRepository $stockItemRepository,
+        ExportProductDataInterfaceFactory $exportProductDataFactory
     ) {
         $this->exportResponseFactory = $exportResponseFactory;
         $this->apiResponseDataFactory = $apiResponseDataFactory;
@@ -64,6 +72,7 @@ class Export implements ExportInterface
         $this->collectionFactory = $collectionFactory;
         $this->calculation = $calculation;
         $this->stockItemRepository = $stockItemRepository;
+        $this->exportProductDataFactory = $exportProductDataFactory;
     }
 
     /**
@@ -126,22 +135,22 @@ class Export implements ExportInterface
                 $stock = false;
             }
 
-            $productsArray[] = [
-                'entity_id' => $product['entity_id'],
-                'sku' => $product['sku'],
-                'name' => $product['name'],
-                'price' => $product['price'],
-                'weight' => $product['weight'],
-                'thumbnail' => $this->storeManager->getStore()->getBaseUrl(
-                    UrlInterface::URL_TYPE_MEDIA
+            /** @var ExportProductData $productExport */
+            $productExport = $this->exportProductDataFactory->create();
+            $productExport->setEntityId($product['entity_id'])
+                ->setSku($product['sku'])
+                ->setName($product['name'])
+                ->setPrice($product['price'])
+                ->setWeight($product['weight'])
+                ->setThumbnail(
+                    $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . $product['thumbnail']
                 )
-                    . $product['thumbnail'],
-                'special_price' => $product['special_price'],
-                'stock' => !$stock ? 0 : $stock->getQty(),
-                'min_stock' => !$stock ? 0 : $stock->getMinQty(),
-                'vat' => $vat_percent * 100,
-                'tier_prices' => $tp_array,
-            ];
+                ->setSpecialPrice($product['special_price'])
+                ->setStock(!$stock ? 0 : $stock->getQty())
+                ->setMinStock(!$stock ? 0 : $stock->getMinQty())
+                ->setVat($vat_percent * 100)
+                ->setTierPrices($tp_array);
+            $productsArray[] = $productExport;
         }
 
         return $productsArray;

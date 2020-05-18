@@ -26,4 +26,5 @@
     <preference for="Qinvoice\Connect\Api\Data\ExportResponseInterface" type="Qinvoice\Connect\Model\Data\ExportResponse"/>
     <preference for="Qinvoice\Connect\Api\StockInterface" type="Qinvoice\Connect\Model\Stock"/>
     <preference for="Qinvoice\Connect\Api\Data\StockResponseInterface" type="Qinvoice\Connect\Model\Data\StockResponse"/>
+    <preference for="Qinvoice\Connect\Api\Data\ExportProductDataInterface" type="Qinvoice\Connect\Model\Data\ExportProductData"/>
 </config>

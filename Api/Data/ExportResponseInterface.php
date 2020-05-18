@@ -7,7 +7,7 @@ namespace Qinvoice\Connect\Api\Data;
 interface ExportResponseInterface extends \Qinvoice\Connect\Api\Data\BaseResponseInterface
 {
     /**
-     * @return array
+     * @return \Qinvoice\Connect\Api\Data\ExportProductDataInterface[]
      */
     public function getData();
 }

@@ -17,7 +17,7 @@ class ExportResponse extends BaseResponse implements \Qinvoice\Connect\Api\Data\
     }
 
     /**
-     * @param $data
+     * @param \Qinvoice\Connect\Api\Data\ExportProductDataInterface[] $data
      * @return $this
      */
     public function setData($data)

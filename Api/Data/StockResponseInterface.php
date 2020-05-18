@@ -7,7 +7,7 @@ namespace Qinvoice\Connect\Api\Data;
 interface StockResponseInterface extends \Qinvoice\Connect\Api\Data\BaseResponseInterface
 {
     /**
-     * @return array
+     * @return string[]
      */
     public function getData();
 }
