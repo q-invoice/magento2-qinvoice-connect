@@ -1,19 +1,19 @@
 <?php
-
 /**
  * Copyright ©q-invoice B.V.. All rights reserved.
  */
 
 namespace Qinvoice\Connect\Model\Config\Source;
 
-class Attribute implements \Magento\Framework\Option\ArrayInterface
+use Magento\Catalog\Model\Product;
+use Magento\Framework\Option\ArrayInterface;
+
+class Attribute implements ArrayInterface
 {
     public function __construct(
-        \Magento\Catalog\Model\Product $product
-    )
-    {
+        Product $product
+    ) {
         $this->product = $product;
-
     }
 
     public function toOptionArray()
@@ -22,7 +22,7 @@ class Attribute implements \Magento\Framework\Option\ArrayInterface
         $attributeArray = [];
 
         foreach ($attributes as $attribute) {
-            $attributeArray[] = ['value' => $attribute->getFrontendLabel(), 'label' => $attribute->getAttributeCode()];
+            $attributeArray[] = ['value' => $attribute->getAttributeCode(), 'label' => $attribute->getAttributeCode()];
         }
         return $attributeArray;
     }

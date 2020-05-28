@@ -1,41 +1,66 @@
 <?php
-
 /**
  * Copyright ©q-invoice B.V.. All rights reserved.
  */
 
 namespace Qinvoice\Connect\Observer;
 
+use Magento\Catalog\Model\ProductFactory;
+use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Qinvoice\Connect\Model\RequestFactory;
 
 class OrderPlaceAfter implements ObserverInterface
 {
-    protected $_collectionFactory;
-    protected $_productFactory;
-    protected $_storeManager;
-    protected $_scopeConfig;
-    protected $_call;
+    /**
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
 
+    /**
+     * @var \Qinvoice\Connect\Service\Communicator
+     */
+    private $communicator;
+    /**
+     * @var RequestFactory
+     */
+    private $requestFactory;
+
+    /**
+     * OrderPlaceAfter constructor.
+     * @param \Qinvoice\Connect\Service\Communicator $communicator
+     * @param ScopeConfigInterface $scopeConfig
+     */
     public function __construct(
-        \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $collectionFactory,
-        \Magento\Catalog\Model\ProductFactory $productFactory,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Qinvoice\Connect\Model\Call $call
-    )
-    {
-        $this->_collectionFactory = $collectionFactory;
-        $this->_productFactory = $productFactory;
-        $this->_storeManager = $storeManager;
-        $this->_scopeConfig = $scopeConfig;
-        $this->_call = $call;
-
+        \Qinvoice\Connect\Service\Communicator $communicator,
+        ScopeConfigInterface $scopeConfig,
+        RequestFactory $requestFactory
+    ) {
+        $this->scopeConfig = $scopeConfig;
+        $this->communicator = $communicator;
+        $this->requestFactory = $requestFactory;
     }
 
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function execute(Observer $observer)
     {
         $order = $observer->getOrder();
-        $this->_call->sendOnOrderPlace($order);
-    }
+        // GETTING TRIGGER SETTING
+        $order_triggers = explode(
+            ",",
+            $this->scopeConfig->getValue(
+                'invoice_options/invoice/invoice_trigger_order',
+                ScopeInterface::SCOPE_STORE
+            )
+        );
+        $payment = $order->getPayment();
 
+        if (in_array($payment->getMethod(), $order_triggers)) {
+            $document = $this->requestFactory->createDocumentFromOrder($order, false);
+            $this->communicator->sendRequest($document);
+        }
+    }
 }

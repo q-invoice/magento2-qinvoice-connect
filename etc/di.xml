@@ -1,3 +1,30 @@
 <?xml version="1.0"?>
+<!--
+/**
+ * Copyright ©q-invoice B.V.. All rights reserved.
+ */
+-->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Qinvoice\Connect\Model\RequestFactory">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="login" xsi:type="object">Qinvoice\Connect\Model\Modifiers\LoginModifier</item>
+                <item name="invoice" xsi:type="object">Qinvoice\Connect\Model\Modifiers\InvoiceModifier</item>
+                <item name="invoiceBillingAddress" xsi:type="object">Qinvoice\Connect\Model\Modifiers\BillingAddressModifier</item>
+                <item name="invoiceShippingAddress" xsi:type="object">Qinvoice\Connect\Model\Modifiers\ShippingAddressModifier</item>
+                <item name="invoiceItemes" xsi:type="object">Qinvoice\Connect\Model\Modifiers\InvoiceItemMofedier</item>
+            </argument>
+        </arguments>
+    </type>
+    <preference for="Qinvoice\Connect\Api\Data\ResponseDataInterface" type="Qinvoice\Connect\Model\Data\ApiResponseData"/>
+    <preference for="Qinvoice\Connect\Api\InstallationValidatorInterface" type="Qinvoice\Connect\Model\InstallationValidator"/>
+    <preference for="Qinvoice\Connect\Api\Data\InstallationValidatorResponseInterface" type="Qinvoice\Connect\Model\Data\InstallationValidatorResponse"/>
+
+    <preference for="Qinvoice\Connect\Api\StoresInterface" type="Qinvoice\Connect\Model\Stores"/>
+    <preference for="Qinvoice\Connect\Api\Data\StoresResponseInterface" type="Qinvoice\Connect\Model\Data\StoresResponse"/>
+    <preference for="Qinvoice\Connect\Api\ExportInterface" type="Qinvoice\Connect\Model\Export"/>
+    <preference for="Qinvoice\Connect\Api\Data\ExportResponseInterface" type="Qinvoice\Connect\Model\Data\ExportResponse"/>
+    <preference for="Qinvoice\Connect\Api\StockInterface" type="Qinvoice\Connect\Model\Stock"/>
+    <preference for="Qinvoice\Connect\Api\Data\StockResponseInterface" type="Qinvoice\Connect\Model\Data\StockResponse"/>
+    <preference for="Qinvoice\Connect\Api\Data\ExportProductDataInterface" type="Qinvoice\Connect\Model\Data\ExportProductData"/>
 </config>

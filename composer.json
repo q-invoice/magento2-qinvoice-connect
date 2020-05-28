@@ -1,9 +1,12 @@
 {
-  "name": "qnvc/magento-connect",
+  "name": "q-invoice/magento-connect",
   "version": "2.3.0",
   "description": "Magento 2 q-invoice connect",
-  "require": {
-  },
+    "require": {
+        "php": "~7.1.3||~7.2.0||~7.3.0",
+        "magento/framework": "102.0.*",
+        "magento/module-sales": "102.0.*"
+    },
   "type": "magento2-module",
   "license": [
     "proprietary"
