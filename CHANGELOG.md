@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.4.0] - 2020-05-28
+### Added
+- Use native Magento rest and authentication
+- Support for MultiSafepay payment methods
+
+### Changed
+- Refactored code
+
 ## [2.3.0] - 2020-03-31
 ### Added
 - Preliminary support for payment data
