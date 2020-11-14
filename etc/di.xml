@@ -10,6 +10,7 @@
             <argument name="modifiers" xsi:type="array">
                 <item name="login" xsi:type="object">Qinvoice\Connect\Model\Modifiers\LoginModifier</item>
                 <item name="invoice" xsi:type="object">Qinvoice\Connect\Model\Modifiers\InvoiceModifier</item>
+                <item name="ShippingModifier" xsi:type="object">Qinvoice\Connect\Model\Modifiers\ShippingModifier</item>
                 <item name="invoiceBillingAddress" xsi:type="object">Qinvoice\Connect\Model\Modifiers\BillingAddressModifier</item>
                 <item name="invoiceShippingAddress" xsi:type="object">Qinvoice\Connect\Model\Modifiers\ShippingAddressModifier</item>
                 <item name="invoiceItemes" xsi:type="object">Qinvoice\Connect\Model\Modifiers\InvoiceItemModifier</item>

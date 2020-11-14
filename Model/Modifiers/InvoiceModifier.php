@@ -6,6 +6,7 @@
 namespace Qinvoice\Connect\Model\Modifiers;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Store\Model\ScopeInterface;
 use Qinvoice\Connect\Api\ModifierInterface;
@@ -27,15 +28,22 @@ class InvoiceModifier implements ModifierInterface
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
+    /**
+     * @var ProductMetadataInterface
+     */
+    private $productMetadata;
 
     /**
      * LoginModifier constructor.
      * @param ScopeConfigInterface $scopeConfig
+     * @param ProductMetadataInterface $productMetadata
      */
     public function __construct(
-        ScopeConfigInterface $scopeConfig
+        ScopeConfigInterface $scopeConfig,
+        ProductMetadataInterface $productMetadata
     ) {
         $this->scopeConfig = $scopeConfig;
+        $this->productMetadata = $productMetadata;
     }
     /**
      * @param Document $document
@@ -72,6 +80,7 @@ class InvoiceModifier implements ModifierInterface
             )
         );
         $invoice['tags'] = $this->getTags($order);
+        $invoice['magento_version'] = $this->getVersion();
 
         return $document->addItem(self::PARENT_NODE, $invoice);
     }
@@ -134,5 +143,10 @@ class InvoiceModifier implements ModifierInterface
                 ]
             ]
         ];
+    }
+
+    private function getVersion()
+    {
+        return $this->productMetadata->getVersion();
     }
 }
