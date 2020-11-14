@@ -27,4 +27,8 @@
     <preference for="Qinvoice\Connect\Api\StockInterface" type="Qinvoice\Connect\Model\Stock"/>
     <preference for="Qinvoice\Connect\Api\Data\StockResponseInterface" type="Qinvoice\Connect\Model\Data\StockResponse"/>
     <preference for="Qinvoice\Connect\Api\Data\ExportProductDataInterface" type="Qinvoice\Connect\Model\Data\ExportProductData"/>
+    <type name="Magento\Sales\Api\OrderManagementInterface">
+        <plugin name="PlaceOrderAfterPlugin"
+                type="Qinvoice\Connect\Plugin\OrderManagmentPlugin" sortOrder="10"/>
+    </type>
 </config>

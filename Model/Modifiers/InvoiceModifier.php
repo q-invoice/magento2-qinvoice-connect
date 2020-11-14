@@ -48,13 +48,7 @@ class InvoiceModifier implements ModifierInterface
         $invoice = $document->getItem(self::PARENT_NODE);
         $invoice['reference'] = $this->addCDATA($order->getIncrementId());
 
-        $orderDate = $order->getCreatedAt();
-        if ($orderDate) {
-            $orderDate = new \DateTime('2000-01-01');
-            $orderDate = $orderDate->format('Y-m-d');
-        }
-
-        $invoice['date'] = $this->addCDATA($orderDate);
+        $invoice['date'] = $this->addCDATA($order->getCreatedAt());
         $invoice['recurring'] = $this->addCDATA("none");
         $invoice['remark'] = $this->addCDATA($this->getRemark($order, $isPaid));
         $invoice['layout'] = $this->addCDATA($this->getLayout());

@@ -1,20 +1,17 @@
 <?php
-/**
- * Copyright ©q-invoice B.V.. All rights reserved.
- */
 
-namespace Qinvoice\Connect\Observer;
 
-use Magento\Catalog\Model\ProductFactory;
-use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
+namespace Qinvoice\Connect\Plugin;
+
+
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Event\ObserverInterface;
+use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\OrderManagementInterface;
 use Magento\Store\Model\ScopeInterface;
-use Magento\Store\Model\StoreManagerInterface;
 use Qinvoice\Connect\Model\RequestFactory;
 
-class OrderPlaceAfter implements ObserverInterface
+class OrderManagmentPlugin
 {
     /**
      * @var ScopeConfigInterface
@@ -45,9 +42,14 @@ class OrderPlaceAfter implements ObserverInterface
         $this->requestFactory = $requestFactory;
     }
 
-    public function execute(Observer $observer)
+
+    /**
+     * @param \Magento\Sales\Api\OrderManagementInterface $subject
+     * @param $result
+     * @param OrderInterface $order
+     */
+    public function afterPlace(\Magento\Sales\Api\OrderManagementInterface $subject, $result, OrderInterface $order)
     {
-        $order = $observer->getOrder();
         // GETTING TRIGGER SETTING
         $order_triggers = explode(
             ",",
@@ -58,9 +60,14 @@ class OrderPlaceAfter implements ObserverInterface
         );
         $payment = $order->getPayment();
 
+
+
         if (in_array($payment->getMethod(), $order_triggers)) {
             $document = $this->requestFactory->createDocumentFromOrder($order, false);
+
             $this->communicator->sendRequest($document);
         }
+
+        return $result;
     }
 }

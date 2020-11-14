@@ -6,9 +6,6 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="checkout_submit_all_after">
-        <observer name="qinvoice_order_place_event" instance="Qinvoice\Connect\Observer\OrderPlaceAfter" shared="true"/>
-    </event>
     <event name="sales_order_invoice_pay">
         <observer name="qinvoice_invoice_pay_event" instance="Qinvoice\Connect\Observer\OrderInvoicePay" shared="true"/>
     </event>
