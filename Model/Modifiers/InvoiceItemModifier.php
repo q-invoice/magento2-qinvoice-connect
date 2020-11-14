@@ -12,7 +12,11 @@ use Magento\Store\Model\ScopeInterface;
 use Qinvoice\Connect\Api\ModifierInterface;
 use Qinvoice\Connect\Model\Document;
 
-class InvoiceItemMofedier implements ModifierInterface
+/**
+ * Class InvoiceItemModifier
+ * @package Qinvoice\Connect\Model\Modifiers
+ */
+class InvoiceItemModifier implements ModifierInterface
 {
     use AddCdata;
 
