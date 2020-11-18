@@ -12,7 +12,11 @@ use Magento\Store\Model\ScopeInterface;
 use Qinvoice\Connect\Api\ModifierInterface;
 use Qinvoice\Connect\Model\Document;
 
-class InvoiceItemMofedier implements ModifierInterface
+/**
+ * Class InvoiceItemModifier
+ * @package Qinvoice\Connect\Model\Modifiers
+ */
+class InvoiceItemModifier implements ModifierInterface
 {
     use AddCdata;
 
@@ -81,8 +85,23 @@ class InvoiceItemMofedier implements ModifierInterface
             $orderProduct = $orderItem->getProduct();
             $description = [];
             $description[] = trim($orderProduct->getName());
+
             foreach (explode(",", $productAttributes) as $attrCode) {
+
                 $attrVal = $orderProduct->getData($attrCode);
+                if (is_array($attrVal)) {
+                    if ($attrCode !== 'quantity_and_stock_status') {
+                        continue;
+                    } else {
+                        if (isset($attrVal['is_in_stock'])) {
+                            $description[] = sprintf("%s : %s", "is_in_stock", $attrVal['is_in_stock']);
+                        }
+                        if (isset($attrVal['qty'])) {
+                            $description[] = sprintf("%s : %s", "qty", $attrVal['qty']);
+                        }
+                        continue;
+                    }
+                }
                 if ($attrVal !== null) {
                     $description[] = sprintf("%s : %s", $attrCode, $attrVal);
                 }

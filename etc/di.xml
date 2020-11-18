@@ -10,9 +10,10 @@
             <argument name="modifiers" xsi:type="array">
                 <item name="login" xsi:type="object">Qinvoice\Connect\Model\Modifiers\LoginModifier</item>
                 <item name="invoice" xsi:type="object">Qinvoice\Connect\Model\Modifiers\InvoiceModifier</item>
+                <item name="ShippingModifier" xsi:type="object">Qinvoice\Connect\Model\Modifiers\ShippingModifier</item>
                 <item name="invoiceBillingAddress" xsi:type="object">Qinvoice\Connect\Model\Modifiers\BillingAddressModifier</item>
                 <item name="invoiceShippingAddress" xsi:type="object">Qinvoice\Connect\Model\Modifiers\ShippingAddressModifier</item>
-                <item name="invoiceItemes" xsi:type="object">Qinvoice\Connect\Model\Modifiers\InvoiceItemMofedier</item>
+                <item name="invoiceItemes" xsi:type="object">Qinvoice\Connect\Model\Modifiers\InvoiceItemModifier</item>
             </argument>
         </arguments>
     </type>
@@ -27,4 +28,8 @@
     <preference for="Qinvoice\Connect\Api\StockInterface" type="Qinvoice\Connect\Model\Stock"/>
     <preference for="Qinvoice\Connect\Api\Data\StockResponseInterface" type="Qinvoice\Connect\Model\Data\StockResponse"/>
     <preference for="Qinvoice\Connect\Api\Data\ExportProductDataInterface" type="Qinvoice\Connect\Model\Data\ExportProductData"/>
+    <type name="Magento\Sales\Api\OrderManagementInterface">
+        <plugin name="PlaceOrderAfterPlugin"
+                type="Qinvoice\Connect\Plugin\OrderManagmentPlugin" sortOrder="10"/>
+    </type>
 </config>
