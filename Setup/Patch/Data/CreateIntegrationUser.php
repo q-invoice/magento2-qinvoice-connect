@@ -61,21 +61,22 @@ class CreateIntegrationUser implements DataPatchInterface
 
         try{
             $this->configBasedIntegrationManager->processConfigBasedIntegrations([(string)self::Q_INVOICE_INTEGRATION_NAME => 1]);
+        
+            $integration = $this->integrationService->findByName((string)self::Q_INVOICE_INTEGRATION_NAME);
+            $consumerId = $integration->getConsumerId();
+
+            $accessToken = $this->oauthService->getAccessToken($consumerId);
+            if (!$accessToken && $this->oauthService->createAccessToken($consumerId, true)) {
+                $this->oauthService->getAccessToken($consumerId);
+            }
+
+            $integration->setStatus(\Magento\Integration\Model\Integration::STATUS_ACTIVE);
+            $this->integrationService->update($integration->getData());
+
+            $this->moduleDataSetup->getConnection()->endSetup();
         }catch(Exception $e){
             echo $e->getMessage();
         }
-        $integration = $this->integrationService->findByName(self::Q_INVOICE_INTEGRATION_NAME);
-        $consumerId = $integration->getConsumerId();
-
-        $accessToken = $this->oauthService->getAccessToken($consumerId);
-        if (!$accessToken && $this->oauthService->createAccessToken($consumerId, true)) {
-            $this->oauthService->getAccessToken($consumerId);
-        }
-
-        $integration->setStatus(\Magento\Integration\Model\Integration::STATUS_ACTIVE);
-        $this->integrationService->update($integration->getData());
-
-        $this->moduleDataSetup->getConnection()->endSetup();
     }
 
     /**
