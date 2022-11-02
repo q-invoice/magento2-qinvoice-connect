@@ -59,7 +59,7 @@ class CreateIntegrationUser implements DataPatchInterface
     {
         $this->moduleDataSetup->getConnection()->startSetup();
 
-        $this->configBasedIntegrationManager->processConfigBasedIntegrations([self::Q_INVOICE_INTEGRATION_NAME => 1]);
+        $this->configBasedIntegrationManager->processConfigBasedIntegrations([(string)self::Q_INVOICE_INTEGRATION_NAME => 1]);
 
         $integration = $this->integrationService->findByName(self::Q_INVOICE_INTEGRATION_NAME);
         $consumerId = $integration->getConsumerId();
