@@ -18,6 +18,7 @@ class InvoiceModifier implements ModifierInterface
     const PARENT_NODE = "invoice";
     const INVOICE_REMARK_CONFIG_KEY =  'invoice_options/invoice/invoice_remark';
     const INVOICE_PAID_REMARK_CONFIG_KEY =  'invoice_options/invoice/paid_remark';
+    const INVOICE_REFERENCE_CONFIG_KEY =  'invoice_options/invoice/reference';
     const INVOICE_LAYOUT_CONFIG_CODE =  'invoice_options/invoice/layout_code';
     const INVOICE_ACTION_CONFIG_CODE =  'invoice_options/invoice/invoice_action';
     const INVOICE_SAVE_RELATION_CONFIG_CODE =  'invoice_options/invoice/save_relation';
@@ -54,8 +55,7 @@ class InvoiceModifier implements ModifierInterface
     public function modify(Document $document, OrderInterface $order, $isPaid = false)
     {
         $invoice = $document->getItem(self::PARENT_NODE);
-        $invoice['reference'] = $this->addCDATA($order->getIncrementId());
-
+        $invoice['reference'] = $this->addCDATA($this->getReference($order));
         $invoice['date'] = $this->addCDATA($order->getCreatedAt());
         $invoice['recurring'] = $this->addCDATA("none");
         $invoice['remark'] = $this->addCDATA($this->getRemark($order, $isPaid));
@@ -105,6 +105,18 @@ class InvoiceModifier implements ModifierInterface
         return $document_remark . "\n" . $paid_remark;
     }
 
+    private function getReference($order)
+    {
+        $reference = $this->scopeConfig->getValue(
+            self::INVOICE_REFERENCE_CONFIG_KEY,
+            ScopeInterface::SCOPE_STORE
+        );
+
+        $reference = str_replace('{order_id}', $order->getIncrementId(), $reference);
+
+        return $reference;
+    }
+
     private function getLayout()
     {
         $layout_code = $this->scopeConfig->getValue(
@@ -112,8 +124,10 @@ class InvoiceModifier implements ModifierInterface
             ScopeInterface::SCOPE_STORE
         );
 
-        return isset($layout_code['default']) ? $layout_code['default'] : '';
+        return isset($layout_code) ? $layout_code : '';
     }
+
+
 
     private function getPaid($order, $isPaid)
     {

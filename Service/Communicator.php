@@ -26,11 +26,14 @@ class Communicator
      */
     private $debugService;
 
+    private $xmlApi = 'https://app.q-invoice.com/api/xml/';
+
     public function __construct(
         ScopeConfigInterface $scopeInterface,
         ClientFactory $httpClientFactory,
         DebugService $debugService
-    ) {
+    )
+    {
         $this->scopeInterface = $scopeInterface;
         $this->httpClientFactory = $httpClientFactory;
         $this->debugService = $debugService;
@@ -46,10 +49,27 @@ class Communicator
         $request = new \Zend\Http\Request();
         $request->setHeaders($httpHeaders);
 
-        $apiURL = $this->scopeInterface->getValue(
+        $apiVersion = $this->scopeInterface->getValue(
             'invoice_options/invoice/api_url',
             ScopeInterface::SCOPE_STORE
         );
+
+        $apiURL = $this->xmlApi;
+
+        switch ($apiVersion) {
+            case '';
+            default:
+            case '1_4':
+                $apiURL .= '1.4/';
+                break;
+            case '1_3':
+                $apiURL .= '1.3/';
+                break;
+            case '1_2':
+                $apiURL .= '1.2/';
+                break;
+        }
+
 
         $request->setUri($apiURL);
         $request->setMethod(\Zend\Http\Request::METHOD_GET);
@@ -60,7 +80,7 @@ class Communicator
         $client = $this->httpClientFactory->create();
 
         $options = [
-            'adapter'   => Curl::class,
+            'adapter' => Curl::class,
             'curloptions' => [
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_SSL_VERIFYPEER => false,
@@ -78,8 +98,26 @@ class Communicator
 
         $content = $response->getContent();
 
-        if (!is_numeric($response->getContent())) {
-            throw new LocalizedException(__('Qinvoice Connect Error Could not send invoice for order '));
+        switch ($apiVersion) {
+            case '1_4':
+            case '';
+            default:
+                // We expect a JSON response
+                $decoded_content = json_decode($content);
+                if ($decoded_content->result != 'OK') {
+                    throw new LocalizedException(__('Qinvoice Connect Error Could not send invoice for order '));
+                }
+                break;
+            case '1_1':
+            case '1_2':
+            case '1_3':
+                if (preg_match('#[^0-9]#',trim($content))) {
+                    $this->debugService->logQInvoiceRequest($content);
+                    throw new LocalizedException(sprintf('Qinvoice Connect Error: Unexpected response "%s"'), $content);
+                }
+                break;
+
         }
+
     }
 }

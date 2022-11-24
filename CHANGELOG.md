@@ -1,6 +1,16 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.4.4] - 2022-11-21
+### Added
+- Reference field contents is now a setting
+- API v1.4 support
+
+### Changed
+- Return layout code for XML
+- Hardcoded API versions to choose from
+- Response content verifier
+
 ## [2.4.0] - 2020-05-28
 ### Added
 - Use native Magento rest and authentication
