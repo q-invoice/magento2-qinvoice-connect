@@ -68,8 +68,6 @@ class Communicator
                 break;
         }
 
-        dd($apiVersion .':'. $apiURL);
-
         $httpHeaders->addHeaders($headers);
 
         $request = new \Zend\Http\Request();
