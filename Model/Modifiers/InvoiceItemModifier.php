@@ -85,7 +85,9 @@ class InvoiceItemModifier implements ModifierInterface
 
             $orderProduct = $orderItem->getProduct();
             $description = [];
-            $description[] = trim($orderProduct->getName());
+//            $description[] = trim($orderProduct->getName());
+            // change this to the order ITEM name rather than the order PRODUCT name
+            $description[] = trim($orderItem->getName());
 
             if (!is_null($productAttributes)) {
                 foreach (explode(",", $productAttributes) as $attrCode) {
