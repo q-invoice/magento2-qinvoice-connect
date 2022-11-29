@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.5.0] - 2022-11-29
+### Changed
+- Fixed error on instal 'createIntegrationUser'
+- Dropdown for API version
+
 ## [2.4.4] - 2022-11-21
 ### Added
 - Reference field contents is now a setting

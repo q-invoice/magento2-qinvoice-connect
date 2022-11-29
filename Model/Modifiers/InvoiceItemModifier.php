@@ -33,7 +33,8 @@ class InvoiceItemModifier implements ModifierInterface
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig
-    ) {
+    )
+    {
         $this->scopeConfig = $scopeConfig;
     }
 
@@ -86,26 +87,29 @@ class InvoiceItemModifier implements ModifierInterface
             $description = [];
             $description[] = trim($orderProduct->getName());
 
-            foreach (explode(",", $productAttributes) as $attrCode) {
+            if (!is_null($productAttributes)) {
+                foreach (explode(",", $productAttributes) as $attrCode) {
 
-                $attrVal = $orderProduct->getData($attrCode);
-                if (is_array($attrVal)) {
-                    if ($attrCode !== 'quantity_and_stock_status') {
-                        continue;
-                    } else {
-                        if (isset($attrVal['is_in_stock'])) {
-                            $description[] = sprintf("%s : %s", "is_in_stock", $attrVal['is_in_stock']);
+                    $attrVal = $orderProduct->getData($attrCode);
+                    if (is_array($attrVal)) {
+                        if ($attrCode !== 'quantity_and_stock_status') {
+                            continue;
+                        } else {
+                            if (isset($attrVal['is_in_stock'])) {
+                                $description[] = sprintf("%s : %s", "is_in_stock", $attrVal['is_in_stock']);
+                            }
+                            if (isset($attrVal['qty'])) {
+                                $description[] = sprintf("%s : %s", "qty", $attrVal['qty']);
+                            }
+                            continue;
                         }
-                        if (isset($attrVal['qty'])) {
-                            $description[] = sprintf("%s : %s", "qty", $attrVal['qty']);
-                        }
-                        continue;
+                    }
+                    if ($attrVal !== null) {
+                        $description[] = sprintf("%s : %s", $attrCode, $attrVal);
                     }
                 }
-                if ($attrVal !== null) {
-                    $description[] = sprintf("%s : %s", $attrCode, $attrVal);
-                }
             }
+
 
             $productOptions = $orderItem->getProductOptions();
 
@@ -131,13 +135,13 @@ class InvoiceItemModifier implements ModifierInterface
             $itemData = [];
             $itemData['code'] = $this->addCDATA($orderItem->getSku());
             $itemData['quantity'] = $this->addCDATA($orderItem->getQtyOrdered() * 100);
-            $itemData['description']  = $this->addCDATA(implode("\n", $description));
+            $itemData['description'] = $this->addCDATA(implode("\n", $description));
             $itemData['price'] = $orderItem->getBasePrice() * 100;
             $itemData['price_incl'] = $orderItem->getBasePriceInclTax() * 100;
-            $itemData['price_vat'] = $orderItem->getBaseTaxAmount()/$orderItem->getQtyOrdered() * 100;
+            $itemData['price_vat'] = $orderItem->getBaseTaxAmount() / $orderItem->getQtyOrdered() * 100;
             $itemData['vatpercentage'] = $orderItem->getTaxPercent() * 100;
-            $itemData['discount']  = 0;
-            $itemData['categories']  = $this->addCDATA('');
+            $itemData['discount'] = 0;
+            $itemData['categories'] = $this->addCDATA('');
             $items[] = $itemData;
 
             $itemDataOld[] = $orderItem;
