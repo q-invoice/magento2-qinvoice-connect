@@ -13,7 +13,7 @@
             <label>API Configuration</label>
             <tab>qinvoice</tab>
             <resource>Qinvoice_Connect::config</resource>
-            <group id="invoice" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="invoice" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Qinvoice</label>
 
                 <field id="api_version" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
