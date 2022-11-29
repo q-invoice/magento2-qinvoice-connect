@@ -3,8 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [2.5.0] - 2022-11-29
 ### Changed
-- Fixed error on instal 'createIntegrationUser'
+- Fixed error on setup 'createIntegrationUser'
 - Dropdown for API version
+- Dynamic version number in XML
+- Process JSON response
 
 ## [2.4.4] - 2022-11-21
 ### Added
