@@ -42,7 +42,7 @@ class Communicator
     public function sendRequest($postBody)
     {
         $apiVersion = $this->scopeInterface->getValue(
-            'invoice_options/invoice/api_url',
+            'invoice_options/invoice/api_version',
             ScopeInterface::SCOPE_STORE
         );
 
@@ -68,7 +68,7 @@ class Communicator
                 break;
         }
 
-        dump($apiVersion .':'. $apiURL);
+        dd($apiVersion .':'. $apiURL);
 
         $httpHeaders->addHeaders($headers);
 
