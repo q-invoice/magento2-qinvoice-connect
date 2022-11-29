@@ -6,8 +6,7 @@ namespace Qinvoice\Connect\Service;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\ScopeInterface;
-use Zend\Http\Client\Adapter\Curl;
-use Zend\Http\ClientFactory;
+use Magento\Framework\HTTP\Client\Curl;
 
 class Communicator
 {
@@ -32,7 +31,7 @@ class Communicator
         ScopeConfigInterface $scopeInterface,
         ClientFactory $httpClientFactory,
         DebugService $debugService,
-        Magento\Framework\HTTP\Client\Curl $curl
+        Curl $curl
     )
     {
         $this->scopeInterface = $scopeInterface;
@@ -100,6 +99,11 @@ class Communicator
 //        $this->debugService->logQInvoiceRequest($request);
 
 //        $response = $client->send($request);
+
+        $this->curl->setOption(CURLOPT_FOLLOWLOCATION, true);
+        $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
+        $this->curl->setOption(CURLOPT_RETURNTRANSFER, true);
+        $this->curl->setOption(CURLOPT_POSTFIELDS, $content);
 
         $this->curl->post($apiURL, $content);
 
