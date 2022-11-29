@@ -16,7 +16,7 @@
             <group id="invoice" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Qinvoice</label>
 
-                <field id="api_version" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="api_version" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>API Version</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\ApiVersion</source_model>
                     <comment><![CDATA[Always use the latest version unless instructed otherwise]]></comment>
@@ -90,7 +90,7 @@
                 <field id="debug_mode" translate="label" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Debug mode</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Should be disable on production</comment>
+                    <comment>Should be disabled on production</comment>
                 </field>
                 <field id="module_version" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Version</label>
