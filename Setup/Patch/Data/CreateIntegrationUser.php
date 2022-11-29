@@ -14,7 +14,7 @@ use Magento\Integration\Model\ConfigBasedIntegrationManager;
 
 class CreateIntegrationUser implements DataPatchInterface
 {
-    const Q_INVOICE_INTEGRATION_NAME = 'q-invoice';
+    const Q_INVOICE_INTEGRATION_NAME = 'qinvoice';
 
     /**
      * @var ModuleDataSetupInterface
