@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Dropdown for API version
 - Dynamic version number in XML
 - Process JSON response
+- Use item name in stead of product name for XML order item
 
 ## [2.4.4] - 2022-11-21
 ### Added
