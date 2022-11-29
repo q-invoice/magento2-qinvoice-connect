@@ -41,26 +41,24 @@ class Communicator
 
     public function sendRequest($content)
     {
-        $headers = ["Content-type: application/atom+xml"];
-
-        $httpHeaders = new \Zend\Http\Headers();
-        $httpHeaders->addHeaders($headers);
-
-        $request = new \Zend\Http\Request();
-        $request->setHeaders($httpHeaders);
-
         $apiVersion = $this->scopeInterface->getValue(
             'invoice_options/invoice/api_url',
             ScopeInterface::SCOPE_STORE
         );
 
+
         $apiURL = $this->xmlApi;
+
+        $httpHeaders = new \Zend\Http\Headers();
+        $headers = ["Content-type: application/atom+xml"];
 
         switch ($apiVersion) {
             case '';
             default:
             case '1_4':
                 $apiURL .= '1.4/';
+                $headers = ["Accept: application/json"];
+                $httpHeaders->addHeaders($headers);
                 break;
             case '1_3':
                 $apiURL .= '1.3/';
@@ -69,6 +67,11 @@ class Communicator
                 $apiURL .= '1.2/';
                 break;
         }
+
+        $httpHeaders->addHeaders($headers);
+
+        $request = new \Zend\Http\Request();
+        $request->setHeaders($httpHeaders);
 
 
         $request->setUri($apiURL);
@@ -109,13 +112,14 @@ class Communicator
                 $decoded_content = json_decode($content);
                 var_dump($decoded_content);
                 if ($decoded_content->result != 'OK') {
+                    $this->debugService->logQInvoiceRequest($content);
                     throw new LocalizedException(__('Qinvoice Connect Error Could not send invoice for order '));
                 }
                 break;
             case '1_1':
             case '1_2':
             case '1_3':
-                if (preg_match('#[^0-9]#',trim($content))) {
+                if (preg_match('#[^0-9]#', trim($content))) {
                     $this->debugService->logQInvoiceRequest($content);
                     throw new LocalizedException(sprintf('Qinvoice Connect Error: Unexpected response "%s"'), $content);
                 }
