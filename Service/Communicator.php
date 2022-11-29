@@ -98,6 +98,9 @@ class Communicator
 
         $content = $response->getContent();
 
+        var_dump($content);
+
+
         switch ($apiVersion) {
             case '1_4':
             case '';
