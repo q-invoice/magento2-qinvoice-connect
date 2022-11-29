@@ -92,6 +92,10 @@ class InvoiceModifier implements ModifierInterface
             ScopeInterface::SCOPE_STORE
         );
 
+        if(strlen($document_remark) == 0){
+            $document_remark = '';
+        }
+
         $document_remark = str_replace('{order_id}', $order->getIncrementId(), $document_remark);
 
         $paid_remark = '';
@@ -100,6 +104,11 @@ class InvoiceModifier implements ModifierInterface
                 self::INVOICE_PAID_REMARK_CONFIG_KEY,
                 ScopeInterface::SCOPE_STORE
             );
+
+            if(strlen($paid_remark) == 0){
+                $paid_remark = '';
+            }
+
         }
 
         return $document_remark . "\n" . $paid_remark;
