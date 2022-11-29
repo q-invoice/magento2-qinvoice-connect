@@ -101,8 +101,6 @@ class Communicator
 
         $content = $response->getBody();
 
-        var_dump($content);
-
 
         switch ($apiVersion) {
             case '1_4':
@@ -110,7 +108,6 @@ class Communicator
             default:
                 // We expect a JSON response
                 $decoded_content = json_decode($content);
-                var_dump($decoded_content);
                 if ($decoded_content->result != 'OK') {
                     $this->debugService->logQInvoiceRequest($content);
                     throw new LocalizedException(__('Qinvoice Connect Error Could not send invoice for order '));
