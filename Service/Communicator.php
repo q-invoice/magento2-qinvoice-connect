@@ -6,7 +6,8 @@ namespace Qinvoice\Connect\Service;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\ScopeInterface;
-use Magento\Framework\HTTP\Client\Curl;
+use Zend\Http\Client\Adapter\Curl;
+use Zend\Http\ClientFactory;
 
 class Communicator
 {
@@ -30,17 +31,15 @@ class Communicator
     public function __construct(
         ScopeConfigInterface $scopeInterface,
         ClientFactory $httpClientFactory,
-        DebugService $debugService,
-        Curl $curl
+        DebugService $debugService
     )
     {
         $this->scopeInterface = $scopeInterface;
         $this->httpClientFactory = $httpClientFactory;
         $this->debugService = $debugService;
-        $this->curl = $curl;
     }
 
-    public function sendRequest($content)
+    public function sendRequest($postBody)
     {
         $apiVersion = $this->scopeInterface->getValue(
             'invoice_options/invoice/api_url',
@@ -50,16 +49,16 @@ class Communicator
 
         $apiURL = $this->xmlApi;
 
-//        $httpHeaders = new \Zend\Http\Headers();
-//        $headers = ["Content-type: application/atom+xml"];
+        $httpHeaders = new \Zend\Http\Headers();
+        $headers = ["Content-type: application/atom+xml"];
 
         switch ($apiVersion) {
             case '';
             default:
             case '1_4':
                 $apiURL .= '1.4/';
-//                $headers = ["Accept: application/json"];
-//                $httpHeaders->addHeaders($headers);
+                $headers = ["Accept: application/json"];
+                $httpHeaders->addHeaders($headers);
                 break;
             case '1_3':
                 $apiURL .= '1.3/';
@@ -68,48 +67,41 @@ class Communicator
                 $apiURL .= '1.2/';
                 break;
         }
-//
-//        $httpHeaders->addHeaders($headers);
-//
-//        $request = new \Zend\Http\Request();
-//        $request->setHeaders($httpHeaders);
-//
-//
-//        $request->setUri($apiURL);
-//        $request->setMethod(\Zend\Http\Request::METHOD_GET);
-//
-//        $request->setContent($content);
-//
-//        /** @var \Zend\Http\Client $client */
-//        $client = $this->httpClientFactory->create();
-//
-//        $options = [
-//            'adapter' => Curl::class,
-//            'curloptions' => [
-//                CURLOPT_FOLLOWLOCATION => true,
-//                CURLOPT_SSL_VERIFYPEER => false,
-//                CURLOPT_RETURNTRANSFER => true,
-//                CURLOPT_POSTFIELDS => $content
-//            ]
-//            ,
-//            'timeout' => 120
-//        ];
-//        $client->setOptions($options);
 
-//        $this->debugService->logQInvoiceRequest($request);
+        $httpHeaders->addHeaders($headers);
 
-//        $response = $client->send($request);
+        $request = new \Zend\Http\Request();
+        $request->setHeaders($httpHeaders);
 
-        $this->curl->setOption(CURLOPT_FOLLOWLOCATION, true);
-        $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
-        $this->curl->setOption(CURLOPT_RETURNTRANSFER, true);
-        $this->curl->setOption(CURLOPT_POSTFIELDS, $content);
 
-        $this->curl->post($apiURL, $content);
+        $request->setUri($apiURL);
+        $request->setMethod(\Zend\Http\Request::METHOD_GET);
 
-        $result = $this->curl->getBody();
+        $request->setContent($postBody);
 
-        var_dump($result);
+        /** @var \Zend\Http\Client $client */
+        $client = $this->httpClientFactory->create();
+
+        $options = [
+            'adapter' => Curl::class,
+            'curloptions' => [
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POSTFIELDS => $postBody
+            ]
+            ,
+            'timeout' => 120
+        ];
+        $client->setOptions($options);
+
+        $this->debugService->logQInvoiceRequest($request);
+
+        $response = $client->send($request);
+
+        $content = $response->getBody();
+
+        var_dump($content);
 
 
         switch ($apiVersion) {
@@ -117,19 +109,19 @@ class Communicator
             case '';
             default:
                 // We expect a JSON response
-                $decoded_content = json_decode($result);
+                $decoded_content = json_decode($content);
                 var_dump($decoded_content);
                 if ($decoded_content->result != 'OK') {
-                    $this->debugService->logQInvoiceRequest($result);
+                    $this->debugService->logQInvoiceRequest($content);
                     throw new LocalizedException(__('Qinvoice Connect Error Could not send invoice for order '));
                 }
                 break;
             case '1_1':
             case '1_2':
             case '1_3':
-                if (preg_match('#[^0-9]#', trim($result))) {
-                    $this->debugService->logQInvoiceRequest($result);
-                    throw new LocalizedException(sprintf('Qinvoice Connect Error: Unexpected response "%s"'), $result);
+                if (preg_match('#[^0-9]#', trim($content))) {
+                    $this->debugService->logQInvoiceRequest($content);
+                    throw new LocalizedException(sprintf('Qinvoice Connect Error: Unexpected response "%s"'), $content);
                 }
                 break;
 
