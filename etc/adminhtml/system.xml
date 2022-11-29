@@ -13,12 +13,13 @@
             <label>API Configuration</label>
             <tab>qinvoice</tab>
             <resource>Qinvoice_Connect::config</resource>
-            <group id="invoice" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="invoice" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Qinvoice</label>
 
-                <field id="api_url" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>API URL</label>
-                    <comment><![CDATA[e.g. https://app.q-invoice.com/api/xml/1.2/]]></comment>
+                <field id="api_version" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API Version</label>
+                    <source_model>\Qinvoice\Connect\Model\Config\Source\ApiVersion</source_model>
+                    <comment><![CDATA[Always use the latest version unless instructed otherwise]]></comment>
                 </field>
                 <field id="api_username" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>API Username</label>
@@ -26,18 +27,22 @@
                 <field id="api_password" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>API Password</label>
                 </field>
-                <field id="document_type" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="document_type" translate="label" type="select" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>After request</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\DocumentType</source_model>
                     <comment><![CDATA[Document to generate for orders]]></comment>
                 </field>
-                <field id="layout_code" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="reference" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Document reference</label>
+                    <comment><![CDATA[e.g. {order_id}.]]></comment>
+                </field>
+                <field id="layout_code" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Layout Code</label>
                     <comment><![CDATA[Optional]]></comment>
                 </field>
                 <field id="invoice_remark" translate="label" type="textarea" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Invoice remark</label>
-                    <comment><![CDATA[e.g. Order #{order_id}.]]></comment>
+                    <comment><![CDATA[e.g. Your order #{order_id}.]]></comment>
                 </field>
                 <field id="invoice_tag" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Invoice tag</label>
@@ -85,7 +90,7 @@
                 <field id="debug_mode" translate="label" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Debug mode</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Should be disable on production</comment>
+                    <comment>Should be disabled on production</comment>
                 </field>
                 <field id="module_version" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Version</label>

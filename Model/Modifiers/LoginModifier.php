@@ -10,6 +10,7 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Store\Model\ScopeInterface;
 use Qinvoice\Connect\Api\ModifierInterface;
 use Qinvoice\Connect\Model\Document;
+use Qinvoice\Connect\Service\ModuleVersion;
 
 class LoginModifier implements ModifierInterface
 {
@@ -17,7 +18,7 @@ class LoginModifier implements ModifierInterface
     const DOCUMENT_TYPE_CONFIG_KEY = 'invoice_options/invoice/document_type';
     const API_USERNAME_CONFIG_KEY = 'invoice_options/invoice/api_username';
     const API_PASSWORD_CONFIG_KEY = 'invoice_options/invoice/api_password';
-    const IDENTIFIER = 'Magento_2.2.3';
+    const IDENTIFIER = 'Magento';
     const PARENT_NODE = "login";
 
     /**
@@ -26,13 +27,21 @@ class LoginModifier implements ModifierInterface
     private $scopeConfig;
 
     /**
+     * @var ModuleVersion
+     */
+    private $moduleVersion;
+    /**
      * LoginModifier constructor.
      * @param ScopeConfigInterface $scopeConfig
+     * @param ModuleVersion $moduleVersion
      */
     public function __construct(
-        ScopeConfigInterface $scopeConfig
+        ScopeConfigInterface $scopeConfig,
+        ModuleVersion $moduleVersion
+
     ) {
         $this->scopeConfig = $scopeConfig;
+        $this->moduleVersion = $moduleVersion;
     }
 
     /**
@@ -63,7 +72,7 @@ class LoginModifier implements ModifierInterface
             ],
             'username' => $this->addCDATA($username),
             'password' => $this->addCDATA($password),
-            'identifier' => $this->addCDATA(self::IDENTIFIER),
+            'identifier' => $this->addCDATA(self::IDENTIFIER .' '. $this->moduleVersion->get()),
         ];
 
         $document->addItem(self::PARENT_NODE, $login);
