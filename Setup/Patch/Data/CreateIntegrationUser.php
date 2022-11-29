@@ -14,7 +14,7 @@ use Magento\Integration\Model\ConfigBasedIntegrationManager;
 
 class CreateIntegrationUser implements DataPatchInterface
 {
-    const Q_INVOICE_INTEGRATION_NAME = '2855885582';
+    const Q_INVOICE_INTEGRATION_NAME = '2335566778899';
 
     /**
      * @var ModuleDataSetupInterface
@@ -60,7 +60,7 @@ class CreateIntegrationUser implements DataPatchInterface
         $this->moduleDataSetup->getConnection()->startSetup();
 
         try{
-            $this->configBasedIntegrationManager->processConfigBasedIntegrations([(self::Q_INVOICE_INTEGRATION_NAME => 1]);
+            $this->configBasedIntegrationManager->processConfigBasedIntegrations([self::Q_INVOICE_INTEGRATION_NAME => 1]);
         
             $integration = $this->integrationService->findByName(self::Q_INVOICE_INTEGRATION_NAME);
             $consumerId = $integration->getConsumerId();
