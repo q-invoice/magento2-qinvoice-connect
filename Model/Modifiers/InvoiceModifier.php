@@ -92,7 +92,7 @@ class InvoiceModifier implements ModifierInterface
             ScopeInterface::SCOPE_STORE
         );
 
-        if(strlen($document_remark) == 0){
+        if(is_null($document_remark)){
             $document_remark = '';
         }
 
@@ -105,7 +105,7 @@ class InvoiceModifier implements ModifierInterface
                 ScopeInterface::SCOPE_STORE
             );
 
-            if(strlen($paid_remark) == 0){
+            if(is_null($paid_remark)){
                 $paid_remark = '';
             }
 
