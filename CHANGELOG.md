@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.5.1] - 2022-12-13
+### Added
+- Description for configurable products in invoice item
+
 ## [2.5.0] - 2022-11-29
 ### Changed
 - Fixed error on setup 'createIntegrationUser'
