@@ -26,16 +26,20 @@ class InvoiceItemModifier implements ModifierInterface
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
+    private \Psr\Log\LoggerInterface $logger;
+
 
     /**
      * LoginModifier constructor.
      * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
-        ScopeConfigInterface $scopeConfig
+        ScopeConfigInterface $scopeConfig,
+        \Psr\Log\LoggerInterface $logger
     )
     {
         $this->scopeConfig = $scopeConfig;
+        $this->logger = $logger;
     }
 
     /**
@@ -83,9 +87,14 @@ class InvoiceItemModifier implements ModifierInterface
                 continue;
             }
 
+            $this->logger->debug('Processing order item', ['name' => $orderItem->getName()]);
+
             $orderProduct = $orderItem->getProduct();
             $description = [];
-            $description[] = trim($orderProduct->getName());
+            //$description[] = trim($orderProduct->getName());
+            // change this to the order ITEM name rather than the order PRODUCT name
+            $description[] = trim($orderItem->getName());
+
 
             if (!is_null($productAttributes)) {
                 foreach (explode(",", $productAttributes) as $attrCode) {
@@ -114,12 +123,14 @@ class InvoiceItemModifier implements ModifierInterface
             $productOptions = $orderItem->getProductOptions();
 
             if (isset($productOptions['options'])) {
+                $this->logger->debug('Found options', $productOptions['options']);
                 foreach ($productOptions['options'] as $option) {
                     $description[] = sprintf("%s : %s", $option['label'], $option['print_value']);
                 }
             }
 
             if (isset($productOptions['bundle_options'])) {
+                $this->logger->debug('Found bundle_options', $productOptions['bundle_options']);
                 foreach ($productOptions['bundle_options'] as $option) {
                     foreach ($option['value'] as $value) {
                         $description[] = sprintf(
@@ -128,6 +139,22 @@ class InvoiceItemModifier implements ModifierInterface
                             $value['qty'],
                             $value['title']
                         );
+                    }
+                }
+            }
+
+//            if (isset($productOptions['additional_options'])) {
+//                $this->logger->debug('Found additional_options', $productOptions['additional_options']);
+//                foreach ($productOptions['additional_options'] as $option) {
+//                    $description[] = sprintf("%s : %s", $option['label'], $option['value']);
+//                }
+//            }
+
+            if ($orderItem->getProductType() == 'configurable') {
+                if (isset($productOptions['attributes_info'])) {
+                    $this->logger->debug('Found attributes_info', $productOptions['attributes_info']);
+                    foreach ($productOptions['attributes_info'] as $option) {
+                        $description[] = sprintf("%s : %s", $option['label'], $option['value']);
                     }
                 }
             }
