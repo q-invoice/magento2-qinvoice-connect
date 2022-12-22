@@ -7,7 +7,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <tab id="qinvoice" translate="label" sortOrder="1000">
+        <tab id="qinvoice" translate="label" sortOrder="1000" before_html='<img src="https://www.q-invoice.nl/wp-content/uploads/2020/05/q-invoice_logo_icon-213x300.png"/>'>
             <label>Q-invoice</label>
         </tab>
         <section id="api_configuration" translate="label" type="text" sortOrder="100" showInDefault="1"
@@ -35,7 +35,7 @@
                 </field>
             </group>
         </section>
-        <section id="invoice_options" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1"
+        <section id="invoice_options" translate="label" type="text" sortOrder="200" showInDefault="1" showInWebsite="1"
                  showInStore="1">
             <group id="invoice" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1"
                    showInStore="1">
