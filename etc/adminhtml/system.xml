@@ -113,7 +113,7 @@
                     <fieldset_data>
                         <label>Customer Groups</label>
                         <path>customer_groups</path>
-                        <source_model>\Qinvoice\Connect\Model\Config\Source\CustomerGroup</source_model>
+                        <source_model>\Magento\Customer\Model\ResourceModel\Group\Collection</source_model>
                         <clone_fields>1</clone_fields>
                     </fieldset_data>
                     <dependency>
