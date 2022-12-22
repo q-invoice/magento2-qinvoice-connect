@@ -82,7 +82,7 @@
                     <label>Customer Groups</label>
                     <fieldset_data>
                         <label>Customer Groups</label>
-                        <source_model>Magento\Customer\Model\ResourceModel\Group\Collection</source_model>
+                        <source_model>\Magento\Customer\Model\ResourceModel\Group\Collection</source_model>
                         <clone_fields>0</clone_fields>
                     </fieldset_data>
                     <dependency>
