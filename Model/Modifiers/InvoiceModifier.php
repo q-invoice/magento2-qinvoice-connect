@@ -73,12 +73,31 @@ class InvoiceModifier implements ModifierInterface
                 ScopeInterface::SCOPE_STORE
             )
         );
-        $invoice['calculation_method'] = $this->addCDATA(
+
+        switch($this->addCDATA(
             $this->scopeConfig->getValue(
                 self::INVOICE_CALCULATION_METHOD_CONFIG_CODE,
                 ScopeInterface::SCOPE_STORE
             )
-        );
+        )){
+            case 'incl':
+            case 'excl':
+                $calculation_method = $this->addCDATA(
+                    $this->scopeConfig->getValue(
+                        self::INVOICE_CALCULATION_METHOD_CONFIG_CODE,
+                        ScopeInterface::SCOPE_STORE
+                    )
+                );
+                break;
+            case 'dynamic':
+                if(!is_null($order->getBillingAddress()->getCompany())){
+                    $calculation_method = 'excl';
+                }else{
+                    $calculation_method = 'incl';
+                }
+                break;
+        }
+        $invoice['calculation_method'] = $calculation_method;
         $invoice['tags'] = $this->getTags($order);
         $invoice['magento_version'] = $this->getVersion();
 
