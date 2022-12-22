@@ -1,6 +1,6 @@
 <?php
 
-namespace Vendor\Module\Block\Adminhtml;
+namespace Qinvoice\Connect\Block\Adminhtml;
 
 use Magento\Config\Block\System\Config\Form\Field\FieldArray\AbstractFieldArray;
 use Magento\Framework\DataObject;
