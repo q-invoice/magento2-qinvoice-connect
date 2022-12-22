@@ -15,7 +15,7 @@ class MethodColumn extends Select
 
     public function __construct(Context $context, array $data = [])
     {
-        $this->methoddata = \Qinvoice\Connect\Model\Config\Source\CustomerGroupMethod::class;
+        $this->methoddata = new \Qinvoice\Connect\Model\Config\Source\CustomerGroupMethod;
         parent::__construct($context, $data);
     }
 
@@ -39,7 +39,7 @@ class MethodColumn extends Select
 
     private function getSourceOptions()
     {
-        $customerGroups = $this->groupdata->toOptionArray();
-        return $customerGroups;
+        $methods = $this->methoddata->toOptionArray();
+        return $methods;
     }
 }
