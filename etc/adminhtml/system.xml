@@ -103,7 +103,7 @@
                 <field id="customer_group_demo" translate="label" type="select" sortOrder="111" showInDefault="1"
                        showInWebsite="1" showInStore="1">
                     <label>Group select</label>
-                    <source_model>\Qinvoice\Connect\Model\Config\Source\CustomerGroup</source_model>
+                    <source_model>\Magento\Customer\Model\ResourceModel\Group\Collection</source_model>
                     <comment><![CDATA[Select leading price type]]></comment>
                 </field>
 
