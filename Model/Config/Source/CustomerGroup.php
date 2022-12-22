@@ -68,7 +68,7 @@ class CustomerGroup implements OptionSourceInterface
         $searchCriteriaBuilder->setFilterGroups([$filter_group]);
 
 
-        $customerGroups = $this->groupRepository->getList(SearchCriteria::PAGE_SIZE);
+        $customerGroups = $this->groupRepository->getList($searchCriteriaBuilder);
         $options = [];
         foreach ($customerGroups as $customerGroup) {
             $options[] = [
