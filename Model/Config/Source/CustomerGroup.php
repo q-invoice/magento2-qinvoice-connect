@@ -29,7 +29,7 @@ class CustomerGroup implements OptionSourceInterface
      */
     public function toOptionArray()
     {
-        $customerGroups = $this->groupRepository->getList(Group::CUST_GROUP_ALL);
+        $customerGroups = $this->groupRepository->getList(\Magento\Customer\Model\Group::CUST_GROUP_ALL);
         $options = [];
         foreach ($customerGroups as $customerGroup) {
             $options[] = [
