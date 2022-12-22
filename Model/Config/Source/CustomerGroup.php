@@ -65,7 +65,7 @@ class CustomerGroup implements OptionSourceInterface
             ->create();
 
         // Set the filters for the search criteria
-        $searchCriteriaBuilder->setFilterGroups($filter_group);
+        $searchCriteriaBuilder->setFilterGroups([$filter_group]);
 
 
         $customerGroups = $this->groupRepository->getList(SearchCriteria::PAGE_SIZE);
