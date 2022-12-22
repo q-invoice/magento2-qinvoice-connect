@@ -4,7 +4,7 @@ namespace Qinvoice\Connect\Block\Adminhtml;
 
 use Magento\Config\Block\System\Config\Form\Field\FieldArray\AbstractFieldArray;
 use Magento\Framework\DataObject;
-use Vendor\Module\Block\Adminhtml\Form\Field\CustomColumn;
+use Qinvoice\Connect\Block\Adminhtml\Form\Field\CustomColumn;
 
 class DynamicField extends AbstractFieldArray
 {
