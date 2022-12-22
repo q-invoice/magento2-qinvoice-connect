@@ -108,7 +108,7 @@
                 </field>
 
 
-                <field id="dynamic_field" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1"
+                <field id="dynamic_field" translate="label" sortOrder="112" showInDefault="1" showInWebsite="1"
                        showInStore="1">
                     <label>Order Amount</label>
                     <backend_model>\Qinvoice\Connect\Block\Adminhtml\Config\Backend\ArraySerialized</backend_model>

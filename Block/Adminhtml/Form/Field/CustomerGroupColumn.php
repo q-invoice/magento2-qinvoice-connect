@@ -9,7 +9,7 @@ use Magento\Backend\Block\Template\Context;
 use Magento\Customer\Model\Customer\Attribute\Source\GroupSourceLoggedInOnlyInterface;
 use Magento\Framework\App\ObjectManager;
 
-class CustomColumn extends Select
+class CustomerGroupColumn extends Select
 {
     protected $groupdata;
 
