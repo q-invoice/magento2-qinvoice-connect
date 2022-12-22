@@ -107,6 +107,14 @@
                     <comment><![CDATA[Select leading price type]]></comment>
                 </field>
 
+
+                <field id="dynamic_field" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Order Amount</label>
+                    <backend_model>Vendor\Module\Block\Adminhtml\Config\Backend\ArraySerialized</backend_model>
+                    <frontend_model>Vendor\Module\Block\Adminhtml\DynamicField</frontend_model>
+                </field>
+
                 <field id="customer_groups" translate="label" type="fieldset" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Customer Groups</label>
                     <fieldset_data>
