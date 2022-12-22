@@ -12,6 +12,7 @@ class CustomerGroupMethod implements OptionSourceInterface
     public function toOptionArray()
     {
         return [
+            ['value' => 'automatic', 'label' => __('Automatic, with VAT for consumers, without for companies')],
             ['value' => 'excl', 'label' => __('Prices without VAT are leading')],
             ['value' => 'incl', 'label' => __('Prices with VAT included are leading')],
         ];

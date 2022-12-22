@@ -107,6 +107,23 @@
                     <comment><![CDATA[Select leading price type]]></comment>
                 </field>
 
+                <field id="customer_groups" translate="label" type="fieldset" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Customer Groups</label>
+                    <fieldset_data>
+                        <label>Customer Groups</label>
+                        <path>customer_groups</path>
+                        <source_model>Magento\Customer\Model\ResourceModel\Group\Collection</source_model>
+                        <clone_fields>1</clone_fields>
+                    </fieldset_data>
+                    <field id="group_id" translate="label" type="label" sortOrder="116" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Group ID</label>
+                    </field>
+                    <field id="value" translate="label" type="select" sortOrder="117" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Value</label>
+                        <source_model>Qinvoice\Connect\Model\Config\Source\CustomerGroupMethod</source_model>
+                    </field>
+                </field>
+
                 <field id="customer_groups_method" translate="label" type="fieldset" sortOrder="115" showInDefault="1"
                        showInWebsite="1" showInStore="1">
                     <label>Customer Groups</label>
@@ -116,10 +133,10 @@
                         <source_model>\Magento\Customer\Model\ResourceModel\Group\Collection</source_model>
                         <clone_fields>1</clone_fields>
                     </fieldset_data>
-                    <dependency>
-                        <field>calculation_method</field>
-                        <value>customer_groups</value>
-                    </dependency>
+<!--                    <dependency>-->
+<!--                        <field>calculation_method</field>-->
+<!--                        <value>customer_groups</value>-->
+<!--                    </dependency>-->
                     <field id="group_id" translate="label" type="label" sortOrder="116" showInDefault="1"
                            showInWebsite="1" showInStore="1">
                         <label>Group ID</label>
