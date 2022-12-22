@@ -9,7 +9,8 @@ use Qinvoice\Connect\Block\Adminhtml\Form\Field\MethodColumn;
 
 class DynamicField extends AbstractFieldArray
 {
-    private $dropdownRenderer;
+    private $groupDropdownRenderer;
+    private $methodDropdownRenderer;
 
     protected function _prepareToRender()
     {
@@ -43,23 +44,23 @@ class DynamicField extends AbstractFieldArray
 
     private function getCustomerGroupDropdownRenderer()
     {
-        if (!$this->dropdownRenderer) {
-            $this->dropdownRenderer = $this->getLayout()->createBlock(
+        if (!$this->groupDropdownRenderer) {
+            $this->groupDropdownRenderer = $this->getLayout()->createBlock(
                 CustomerGroupColumn::class,
                 '',
                 ['data' => ['is_render_to_js_template' => true]]);
         }
-        return $this->dropdownRenderer;
+        return $this->groupDropdownRenderer;
     }
 
     private function getMethodDropdownRenderer()
     {
-        if (!$this->dropdownRenderer) {
-            $this->dropdownRenderer = $this->getLayout()->createBlock(
+        if (!$this->methodDropdownRenderer) {
+            $this->methodDropdownRenderer = $this->getLayout()->createBlock(
                 MethodColumn::class,
                 '',
                 ['data' => ['is_render_to_js_template' => true]]);
         }
-        return $this->dropdownRenderer;
+        return $this->methodDropdownRenderer;
     }
 }

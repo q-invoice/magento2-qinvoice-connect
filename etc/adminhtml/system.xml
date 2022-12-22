@@ -110,9 +110,12 @@
 
                 <field id="dynamic_field" translate="label" sortOrder="112" showInDefault="1" showInWebsite="1"
                        showInStore="1">
-                    <label>Order Amount</label>
+                    <label>Calculation method</label>
                     <backend_model>\Qinvoice\Connect\Block\Adminhtml\Config\Backend\ArraySerialized</backend_model>
                     <frontend_model>\Qinvoice\Connect\Block\Adminhtml\DynamicField</frontend_model>
+                    <depends>
+                        <field id="calculation_method">customer_groups</field>
+                    </depends>
                 </field>
 
 
