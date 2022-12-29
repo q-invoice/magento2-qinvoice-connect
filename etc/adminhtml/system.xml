@@ -175,7 +175,7 @@
 
         <section id="debug" translate="label" type="text" sortOrder="200" showInDefault="1"
                  showInWebsite="1" showInStore="1">
-            <label>Calculation</label>
+            <label>Debug</label>
             <tab>qinvoice</tab>
             <resource>Qinvoice_Connect::config</resource>
             <group id="general" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1"
