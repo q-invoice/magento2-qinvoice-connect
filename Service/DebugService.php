@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 class DebugService
 {
 
-    const DEBUG_MODE_CONFIG_PATH = "invoice_options/invoice/debug_mode";
+    const DEBUG_MODE_CONFIG_PATH = "debug/general/debug_mode";
     /**
      * @var LoggerInterface
      */
@@ -29,10 +29,16 @@ class DebugService
         $this->scopeInterface = $scopeInterface;
     }
 
+    // fallback
     public function logQInvoiceRequest($request)
     {
+        $this->debug($request, []);
+    }
+
+    public function debug($message, array $context = array())
+    {
         if ($this->scopeInterface->getValue(self::DEBUG_MODE_CONFIG_PATH)) {
-            $this->logger->debug($request);
+            $this->logger->debug($message, $context);
         }
     }
 }

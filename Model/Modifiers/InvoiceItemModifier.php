@@ -11,6 +11,7 @@ use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Store\Model\ScopeInterface;
 use Qinvoice\Connect\Api\ModifierInterface;
 use Qinvoice\Connect\Model\Document;
+use Qinvoice\Connect\Service\DebugService;
 
 /**
  * Class InvoiceItemModifier
@@ -26,7 +27,10 @@ class InvoiceItemModifier implements ModifierInterface
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
-    private \Psr\Log\LoggerInterface $logger;
+    /**
+     * @var DebugService
+     */
+    private DebugService $debugService;
 
 
     /**
@@ -35,11 +39,11 @@ class InvoiceItemModifier implements ModifierInterface
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        \Psr\Log\LoggerInterface $logger
+        DebugService $debugService
     )
     {
         $this->scopeConfig = $scopeConfig;
-        $this->logger = $logger;
+        $this->debugService = $debugService;
     }
 
     /**
@@ -87,7 +91,7 @@ class InvoiceItemModifier implements ModifierInterface
                 continue;
             }
 
-            $this->logger->debug('Processing order item', ['name' => $orderItem->getName()]);
+            $this->debugService->debug('Processing order item', ['name' => $orderItem->getName()]);
 
             $orderProduct = $orderItem->getProduct();
             $description = [];
@@ -123,14 +127,14 @@ class InvoiceItemModifier implements ModifierInterface
             $productOptions = $orderItem->getProductOptions();
 
             if (isset($productOptions['options'])) {
-                $this->logger->debug('Found options', $productOptions['options']);
+                $this->debugService->debug('Found options', $productOptions['options']);
                 foreach ($productOptions['options'] as $option) {
                     $description[] = sprintf("%s : %s", $option['label'], $option['print_value']);
                 }
             }
 
             if (isset($productOptions['bundle_options'])) {
-                $this->logger->debug('Found bundle_options', $productOptions['bundle_options']);
+                $this->debugService->debug('Found bundle_options', $productOptions['bundle_options']);
                 foreach ($productOptions['bundle_options'] as $option) {
                     foreach ($option['value'] as $value) {
                         $description[] = sprintf(
@@ -144,7 +148,7 @@ class InvoiceItemModifier implements ModifierInterface
             }
 
 //            if (isset($productOptions['additional_options'])) {
-//                $this->logger->debug('Found additional_options', $productOptions['additional_options']);
+//                $this->debugService->debug('Found additional_options', $productOptions['additional_options']);
 //                foreach ($productOptions['additional_options'] as $option) {
 //                    $description[] = sprintf("%s : %s", $option['label'], $option['value']);
 //                }
@@ -152,7 +156,7 @@ class InvoiceItemModifier implements ModifierInterface
 
             if ($orderItem->getProductType() == 'configurable') {
                 if (isset($productOptions['attributes_info'])) {
-                    $this->logger->debug('Found attributes_info', $productOptions['attributes_info']);
+                    $this->debugService->debug('Found attributes_info', $productOptions['attributes_info']);
                     foreach ($productOptions['attributes_info'] as $option) {
                         $description[] = sprintf("%s : %s", $option['label'], $option['value']);
                     }

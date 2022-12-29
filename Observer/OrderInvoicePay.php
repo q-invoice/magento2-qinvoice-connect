@@ -11,6 +11,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Qinvoice\Connect\Model\RequestFactory;
+use Qinvoice\Connect\Service\DebugService;
 
 class OrderInvoicePay implements ObserverInterface
 {
@@ -27,25 +28,41 @@ class OrderInvoicePay implements ObserverInterface
      */
     private $requestFactory;
 
+    private DebugService $debugService;
+
     /**
      * OrderInvoicePay constructor.
      * @param ScopeConfigInterface $scopeConfig
-     * @param \Qinvoice\Connect\Service\Communicator $communicator,
+     * @param \Qinvoice\Connect\Service\Communicator $communicator ,
+     * @param RequestFactory $requestFactory
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         \Qinvoice\Connect\Service\Communicator $communicator,
-        RequestFactory $requestFactory
-    ) {
+        RequestFactory $requestFactory,
+        DebugService $debugService
+
+    )
+    {
         $this->scopeConfig = $scopeConfig;
         $this->communicator = $communicator;
         $this->requestFactory = $requestFactory;
+        $this->debugService = $debugService;
     }
 
     public function execute(Observer $observer)
     {
+
         $invoice = $observer->getEvent()->getInvoice();
+
+        /** @var \Magento\Sales\Api\Data\OrderInterface $order */
         $order = $invoice->getOrder();
+
+        $this->debugService->debug('Processing payment', array(
+                "order_id" => $order->getIncrementId(),
+                "store_id" => $order->getStoreName()
+            )
+        );
 
         // GETTING TRIGGER SETTING
         $invoice_triggers = explode(
@@ -55,6 +72,7 @@ class OrderInvoicePay implements ObserverInterface
                 ScopeInterface::SCOPE_STORE
             )
         );
+
 
         $payment = $order->getPayment();
 

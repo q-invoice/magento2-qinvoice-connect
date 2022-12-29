@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.6.0] - 2022-12-29
+### Added
+- Dynamic fields for calculation_method
+- Dynamic fields for layout_code
+- StoreId to ScopeConfig->getValue
+
 ## [2.5.1] - 2022-12-13
 ### Added
 - Description for configurable products in invoice item

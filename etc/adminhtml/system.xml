@@ -4,99 +4,196 @@
  * Copyright ©q-invoice B.V.. All rights reserved.
  */
 -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <tab id="qinvoice" translate="label" sortOrder="1000">
-            <label>Qinvoice Connect</label>
+        <tab id="qinvoice" translate="label" sortOrder="1000"
+             before_html='&lt;img src="https://www.q-invoice.nl/wp-content/uploads/2020/05/q-invoice_logo_icon-213x300.png" alt="Q" /&gt;'>
+            <label>Q-invoice</label>
+            <class>qinvoice_tab_class</class>
         </tab>
-        <section id="invoice_options" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+        <section id="invoice_options" translate="label" type="text" sortOrder="100" showInDefault="1"
+                 showInWebsite="1" showInStore="1">
             <label>API Configuration</label>
             <tab>qinvoice</tab>
             <resource>Qinvoice_Connect::config</resource>
-            <group id="invoice" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Qinvoice</label>
+            <group id="invoice" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>API</label>
 
-                <field id="api_version" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="api_version" translate="label" type="select" sortOrder="10" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
                     <label>API Version</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\ApiVersion</source_model>
                     <comment><![CDATA[Always use the latest version unless instructed otherwise]]></comment>
                 </field>
-                <field id="api_username" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="api_username" translate="label" type="text" sortOrder="15" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
                     <label>API Username</label>
                 </field>
-                <field id="api_password" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="api_password" translate="label" type="text" sortOrder="20" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
                     <label>API Password</label>
                 </field>
-                <field id="document_type" translate="label" type="select" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+
+                <field id="document_type" translate="label" type="select" sortOrder="25" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
                     <label>After request</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\DocumentType</source_model>
                     <comment><![CDATA[Document to generate for orders]]></comment>
                 </field>
-                <field id="reference" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="reference" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
                     <label>Document reference</label>
                     <comment><![CDATA[e.g. {order_id}.]]></comment>
                 </field>
-                <field id="layout_code" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Layout Code</label>
-                    <comment><![CDATA[Optional]]></comment>
-                </field>
-                <field id="invoice_remark" translate="label" type="textarea" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+
+                <field id="invoice_remark" translate="label" type="textarea" sortOrder="40" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
                     <label>Invoice remark</label>
                     <comment><![CDATA[e.g. Your order #{order_id}.]]></comment>
                 </field>
-                <field id="invoice_tag" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="invoice_tag" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
                     <label>Invoice tag</label>
                     <comment><![CDATA[Optional. e.g. Your webshop name.]]></comment>
                 </field>
-                <field id="paid_remark" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="paid_remark" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
                     <label>Paid remark</label>
                     <comment><![CDATA[Supplements the document remark. e.g. Your payment has been received.]]></comment>
                 </field>
-                <field id="invoice_trigger_order" translate="label" type="multiselect" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="invoice_trigger_order" translate="label" type="multiselect" sortOrder="70" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
                     <label>Send document for placed orders</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\PaymentMethod</source_model>
-                    <comment><![CDATA[An invoice will be created when an order is received with selected payment methods. REGARDLESS of payment status.]]></comment>
+                    <comment>
+                        <![CDATA[An invoice will be created when an order is received with selected payment methods. REGARDLESS of payment status.]]></comment>
                 </field>
-                <field id="invoice_trigger_payment" translate="label" type="multiselect" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="invoice_trigger_payment" translate="label" type="multiselect" sortOrder="80"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Send document for paid orders</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\PaymentMethod</source_model>
-                    <comment><![CDATA[An invoice will be created when a SUCCESSFUL payment is received for orders with selected payment methods.]]></comment>
+                    <comment>
+                        <![CDATA[An invoice will be created when a SUCCESSFUL payment is received for orders with selected payment methods.]]></comment>
                 </field>
-                <field id="invoice_action" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="invoice_action" translate="label" type="select" sortOrder="90" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
                     <label>After request</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\Action</source_model>
                     <comment><![CDATA[Create document and send to customer?]]></comment>
                 </field>
-                <field id="save_relation" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="save_relation" translate="label" type="select" sortOrder="100" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
                     <label>Save customer details</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\Relation</source_model>
                     <comment><![CDATA[Save customer details to address book?]]></comment>
                 </field>
-                <field id="calculation_method" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Calculation method</label>
-                    <source_model>\Qinvoice\Connect\Model\Config\Source\Method</source_model>
-                    <comment><![CDATA[Select leading price type]]></comment>
-                </field>
-                <field id="product_attributes" translate="label" type="multiselect" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+
+
+                <field id="product_attributes" translate="label" type="multiselect" sortOrder="120" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
                     <label>Products attributes</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\Attribute</source_model>
                     <comment><![CDATA[Select one or more attributes to show on product line]]></comment>
                 </field>
-                <field id="webshop_secret" translate="label" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="webshop_secret" translate="label" type="text" sortOrder="130" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
                     <label>Webshop secret</label>
                     <frontend_model>Qinvoice\Connect\Block\System\Config\Form\Field\Webshopsecret</frontend_model>
                     <comment><![CDATA[Your secret key. Used for inventory synchronisation.]]></comment>
                 </field>
-                <field id="debug_mode" translate="label" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            </group>
+        </section>
+
+        <section id="layout" translate="label" type="text" sortOrder="110" showInDefault="1"
+                 showInWebsite="1" showInStore="1">
+            <label>Layout</label>
+            <tab>qinvoice</tab>
+            <resource>Qinvoice_Connect::config</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>Layout</label>
+                <field id="layout_selector" translate="label" type="select" sortOrder="10" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
+                    <label>Method</label>
+                    <source_model>\Qinvoice\Connect\Model\Config\Source\LayoutSelector</source_model>
+                    <comment><![CDATA[Select an option]]></comment>
+                </field>
+
+                <field id="customer_group_rules" translate="label" sortOrder="20" showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
+                    <label>Rules</label>
+                    <backend_model>\Qinvoice\Connect\Block\Adminhtml\Config\Backend\ArraySerialized</backend_model>
+                    <frontend_model>\Qinvoice\Connect\Block\Adminhtml\DynamicCustomerGroupLayoutCode</frontend_model>
+                    <depends>
+                        <field id="layout_selector">customer_groups</field>
+                    </depends>
+                </field>
+
+                <field id="layout_code" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Layout Code</label>
+                    <comment><![CDATA[Optional]]></comment>
+                    <depends>
+                        <field id="layout_selector">fixed</field>
+                    </depends>
+                </field>
+
+            </group>
+        </section>
+
+        <section id="calculation" translate="label" type="text" sortOrder="120" showInDefault="1"
+                 showInWebsite="1" showInStore="1">
+            <label>Calculation</label>
+            <tab>qinvoice</tab>
+            <resource>Qinvoice_Connect::config</resource>
+            <group id="general" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>Calculation</label>
+                <field id="method" translate="label" type="select" sortOrder="110" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
+                    <label>Method</label>
+                    <source_model>\Qinvoice\Connect\Model\Config\Source\MethodSelector</source_model>
+                    <comment><![CDATA[Select an option]]></comment>
+                </field>
+
+                <field id="customer_group_rules" translate="label" sortOrder="112" showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
+                    <label>Rules</label>
+                    <backend_model>\Qinvoice\Connect\Block\Adminhtml\Config\Backend\ArraySerialized</backend_model>
+                    <frontend_model>\Qinvoice\Connect\Block\Adminhtml\DynamicCustomerGroupCalculationMethod</frontend_model>
+                    <depends>
+                        <field id="method">customer_groups</field>
+                    </depends>
+                </field>
+
+            </group>
+        </section>
+
+        <section id="debug" translate="label" type="text" sortOrder="200" showInDefault="1"
+                 showInWebsite="1" showInStore="1">
+            <label>Debug</label>
+            <tab>qinvoice</tab>
+            <resource>Qinvoice_Connect::config</resource>
+            <group id="general" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>Debug</label>
+                <field id="debug_mode" translate="label" type="select" sortOrder="140" showInDefault="1"
+                       showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Debug mode</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Should be disabled on production</comment>
                 </field>
-                <field id="module_version" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="module_version" translate="label" type="text" sortOrder="150" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
                     <label>Version</label>
                     <frontend_model>Qinvoice\Connect\Block\System\Config\Form\Field\ModuleVersionField</frontend_model>
                 </field>
             </group>
         </section>
+
     </system>
 </config>
