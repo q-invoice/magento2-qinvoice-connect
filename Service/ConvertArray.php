@@ -80,7 +80,9 @@ XML;
                     $xml->addChild($key, $value['@value']);
                 }
                 foreach ($value['@attributes'] as $aKey => $aValue) {
-                    $xml->{$key}->addAttribute($aKey, $aValue);
+                    if(!is_null($aValue)) {
+                        $xml->{$key}->addAttribute($aKey, $aValue);
+                    }
                 }
             } elseif (is_array($value)
                 && in_array('@array', array_keys($value), 1)
