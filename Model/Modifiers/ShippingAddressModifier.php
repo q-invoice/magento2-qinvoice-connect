@@ -24,6 +24,9 @@ class ShippingAddressModifier implements ModifierInterface
     {
         $invoice = $document->getItem(self::PARENT_NODE);
         $shippingAddress = $order->getShippingAddress();
+        if(is_null($shippingAddress)){
+            return $document;
+        }
         $invoice['delivery_companyname'] = $this->addCDATA($shippingAddress->getCompany());
         $invoice['delivery_firstname'] = $this->addCDATA($shippingAddress->getFirstname());
         $invoice['delivery_lastname'] = $this->addCDATA($shippingAddress->getLastname());
