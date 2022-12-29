@@ -103,21 +103,10 @@
                     <frontend_model>Qinvoice\Connect\Block\System\Config\Form\Field\Webshopsecret</frontend_model>
                     <comment><![CDATA[Your secret key. Used for inventory synchronisation.]]></comment>
                 </field>
-                <field id="debug_mode" translate="label" type="select" sortOrder="140" showInDefault="1"
-                       showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Debug mode</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Should be disabled on production</comment>
-                </field>
-                <field id="module_version" translate="label" type="text" sortOrder="150" showInDefault="1"
-                       showInWebsite="1" showInStore="1">
-                    <label>Version</label>
-                    <frontend_model>Qinvoice\Connect\Block\System\Config\Form\Field\ModuleVersionField</frontend_model>
-                </field>
             </group>
         </section>
 
-        <section id="layout" translate="label" type="text" sortOrder="100" showInDefault="1"
+        <section id="layout" translate="label" type="text" sortOrder="110" showInDefault="1"
                  showInWebsite="1" showInStore="1">
             <label>Layout</label>
             <tab>qinvoice</tab>
@@ -155,8 +144,7 @@
             </group>
         </section>
 
-
-        <section id="calculation" translate="label" type="text" sortOrder="100" showInDefault="1"
+        <section id="calculation" translate="label" type="text" sortOrder="120" showInDefault="1"
                  showInWebsite="1" showInStore="1">
             <label>Calculation</label>
             <tab>qinvoice</tab>
@@ -182,6 +170,28 @@
                     </depends>
                 </field>
 
+            </group>
+        </section>
+
+        <section id="debug" translate="label" type="text" sortOrder="200" showInDefault="1"
+                 showInWebsite="1" showInStore="1">
+            <label>Calculation</label>
+            <tab>qinvoice</tab>
+            <resource>Qinvoice_Connect::config</resource>
+            <group id="general" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>Debug</label>
+                <field id="debug_mode" translate="label" type="select" sortOrder="140" showInDefault="1"
+                       showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Debug mode</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Should be disabled on production</comment>
+                </field>
+                <field id="module_version" translate="label" type="text" sortOrder="150" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
+                    <label>Version</label>
+                    <frontend_model>Qinvoice\Connect\Block\System\Config\Form\Field\ModuleVersionField</frontend_model>
+                </field>
             </group>
         </section>
 
