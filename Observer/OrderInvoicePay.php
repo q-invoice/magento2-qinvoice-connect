@@ -11,6 +11,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Qinvoice\Connect\Model\RequestFactory;
+use Qinvoice\Connect\Service\DebugService;
 
 class OrderInvoicePay implements ObserverInterface
 {
@@ -26,25 +27,27 @@ class OrderInvoicePay implements ObserverInterface
      * @var RequestFactory
      */
     private $requestFactory;
-    private \Psr\Log\LoggerInterface $logger;
+
+    private DebugService $debugService;
 
     /**
      * OrderInvoicePay constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param \Qinvoice\Connect\Service\Communicator $communicator ,
      * @param RequestFactory $requestFactory
-     * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         \Qinvoice\Connect\Service\Communicator $communicator,
         RequestFactory $requestFactory,
-        \Psr\Log\LoggerInterface $logger
-    ) {
+        DebugService $debugService
+
+    )
+    {
         $this->scopeConfig = $scopeConfig;
         $this->communicator = $communicator;
         $this->requestFactory = $requestFactory;
-        $this->logger = $logger;
+        $this->debugService = $debugService;
     }
 
     public function execute(Observer $observer)
@@ -55,7 +58,7 @@ class OrderInvoicePay implements ObserverInterface
         /** @var \Magento\Sales\Api\Data\OrderInterface $order */
         $order = $invoice->getOrder();
 
-        $this->logger->log('debug', sprintf('Processing payment for order %s in store %s', $order->getIncrementId(), $order->getStoreName()));
+        $this->debugService->debug('Processing payment', array("order_id" => $order->getIncrementId(), "store_id" => $order->getStoreName()));
 
         // GETTING TRIGGER SETTING
         $invoice_triggers = explode(
@@ -65,7 +68,6 @@ class OrderInvoicePay implements ObserverInterface
                 ScopeInterface::SCOPE_STORE
             )
         );
-
 
 
         $payment = $order->getPayment();

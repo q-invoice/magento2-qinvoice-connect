@@ -14,6 +14,7 @@ use Qinvoice\Connect\Model\Document;
 
 use Qinvoice\Connect\Helper\CustomerGroupCalculationMethodHelper;
 use Qinvoice\Connect\Helper\CustomerGroupLayoutCodeHelper;
+use Qinvoice\Connect\Service\DebugService;
 
 class InvoiceModifier implements ModifierInterface
 {
@@ -39,7 +40,6 @@ class InvoiceModifier implements ModifierInterface
      * @var ProductMetadataInterface
      */
     private $productMetadata;
-    private \Psr\Log\LoggerInterface $logger;
     private \Magento\Store\Model\StoreManagerInterface $storeManager;
     /**
      * @var CustomerGroupLayoutCodeHelper
@@ -50,6 +50,8 @@ class InvoiceModifier implements ModifierInterface
      */
     private CustomerGroupCalculationMethodHelper $customerGroupCalculationMethodHelper;
 
+
+    private DebugService $debugService;
     /**
      * LoginModifier constructor.
      * @param ScopeConfigInterface $scopeConfig
@@ -59,17 +61,17 @@ class InvoiceModifier implements ModifierInterface
         ScopeConfigInterface $scopeConfig,
         ProductMetadataInterface $productMetadata,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Psr\Log\LoggerInterface $logger,
         CustomerGroupLayoutCodeHelper $customerGroupLayoutCodeHelper,
-        CustomerGroupCalculationMethodHelper $customerGroupCalculationMethodHelper
+        CustomerGroupCalculationMethodHelper $customerGroupCalculationMethodHelper,
+        DebugService $debugService
     )
     {
         $this->scopeConfig = $scopeConfig;
         $this->productMetadata = $productMetadata;
-        $this->logger = $logger;
         $this->storeManager = $storeManager;
         $this->customerGroupLayoutCodeHelper = $customerGroupLayoutCodeHelper;
         $this->customerGroupCalculationMethodHelper = $customerGroupCalculationMethodHelper;
+        $this->debugService = $debugService;
     }
 
     public function getStoreId()
@@ -124,6 +126,7 @@ class InvoiceModifier implements ModifierInterface
         $invoice['tags'] = $this->getTags($order);
         $invoice['magento_version'] = $this->getVersion();
 
+        $this->debugService->debug('Created document', $invoice);
 
         return $document->addItem(self::PARENT_NODE, $invoice);
     }
