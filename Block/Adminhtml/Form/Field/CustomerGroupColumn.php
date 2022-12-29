@@ -1,4 +1,7 @@
 <?php
+/**
+ * Copyright ©q-invoice B.V.. All rights reserved.
+ */
 
 namespace Qinvoice\Connect\Block\Adminhtml\Form\Field;
 

@@ -58,7 +58,11 @@ class OrderInvoicePay implements ObserverInterface
         /** @var \Magento\Sales\Api\Data\OrderInterface $order */
         $order = $invoice->getOrder();
 
-        $this->debugService->debug('Processing payment', array("order_id" => $order->getIncrementId(), "store_id" => $order->getStoreName()));
+        $this->debugService->debug('Processing payment', array(
+                "order_id" => $order->getIncrementId(),
+                "store_id" => $order->getStoreName()
+            )
+        );
 
         // GETTING TRIGGER SETTING
         $invoice_triggers = explode(

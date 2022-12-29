@@ -40,7 +40,6 @@ class InvoiceModifier implements ModifierInterface
      * @var ProductMetadataInterface
      */
     private $productMetadata;
-    private \Magento\Store\Model\StoreManagerInterface $storeManager;
     /**
      * @var CustomerGroupLayoutCodeHelper
      */
@@ -52,6 +51,7 @@ class InvoiceModifier implements ModifierInterface
 
 
     private DebugService $debugService;
+
     /**
      * LoginModifier constructor.
      * @param ScopeConfigInterface $scopeConfig
@@ -60,7 +60,6 @@ class InvoiceModifier implements ModifierInterface
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         ProductMetadataInterface $productMetadata,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
         CustomerGroupLayoutCodeHelper $customerGroupLayoutCodeHelper,
         CustomerGroupCalculationMethodHelper $customerGroupCalculationMethodHelper,
         DebugService $debugService
@@ -68,16 +67,11 @@ class InvoiceModifier implements ModifierInterface
     {
         $this->scopeConfig = $scopeConfig;
         $this->productMetadata = $productMetadata;
-        $this->storeManager = $storeManager;
         $this->customerGroupLayoutCodeHelper = $customerGroupLayoutCodeHelper;
         $this->customerGroupCalculationMethodHelper = $customerGroupCalculationMethodHelper;
         $this->debugService = $debugService;
     }
 
-    public function getStoreId()
-    {
-        return $this->storeManager->getStore()->getId();
-    }
 
     /**
      * @param Document $document
@@ -96,7 +90,7 @@ class InvoiceModifier implements ModifierInterface
             $this->scopeConfig->getValue(
                 self::INVOICE_LAYOUT_CONFIG_LAYOUT_SELECTOR,
                 ScopeInterface::SCOPE_STORE,
-                $this->getStoreId()
+                $order->getStoreId()
             ), $order)
         );
         $invoice['paid'] = $this->getPaid($order, $isPaid);
@@ -104,14 +98,14 @@ class InvoiceModifier implements ModifierInterface
             $this->scopeConfig->getValue(
                 self::INVOICE_ACTION_CONFIG_CODE,
                 ScopeInterface::SCOPE_STORE,
-                $this->getStoreId()
+                $order->getStoreId()
             )
         );
         $invoice['saverelation'] = $this->addCDATA(
             $this->scopeConfig->getValue(
                 self::INVOICE_SAVE_RELATION_CONFIG_CODE,
                 ScopeInterface::SCOPE_STORE,
-                $this->getStoreId()
+                $order->getStoreId()
             )
         );
 
@@ -119,7 +113,7 @@ class InvoiceModifier implements ModifierInterface
             $this->scopeConfig->getValue(
                 self::CALCULATION_METHOD_CONFIG,
                 ScopeInterface::SCOPE_STORE,
-                $this->getStoreId()
+                $order->getStoreId()
             ), $order);
 
         $invoice['calculation_method'] = $this->addCDATA($calculation_method);
@@ -162,7 +156,7 @@ class InvoiceModifier implements ModifierInterface
                 $layout_code = $this->scopeConfig->getValue(
                     self::INVOICE_LAYOUT_CONFIG_LAYOUT_CODE,
                     ScopeInterface::SCOPE_STORE,
-                    $this->getStoreId()
+                    $order->getStoreId()
                 );
 
                 return $layout_code;
@@ -175,7 +169,7 @@ class InvoiceModifier implements ModifierInterface
         }
     }
 
-    private function getRemark($order, $isPaid)
+    private function getRemark(OrderInterface $order, $isPaid)
     {
         $document_remark = $this->scopeConfig->getValue(
             self::INVOICE_REMARK_CONFIG_KEY,
@@ -199,11 +193,12 @@ class InvoiceModifier implements ModifierInterface
         return $document_remark . "\n" . $paid_remark;
     }
 
-    private function getReference($order)
+    private function getReference(OrderInterface $order)
     {
         $reference = $this->scopeConfig->getValue(
             self::INVOICE_REFERENCE_CONFIG_KEY,
-            ScopeInterface::SCOPE_STORE
+            ScopeInterface::SCOPE_STORE,
+            $order->getStoreId()
         );
 
         $reference = str_replace('{order_id}', $order->getIncrementId(), $reference);
@@ -224,7 +219,7 @@ class InvoiceModifier implements ModifierInterface
         ];
     }
 
-    private function getTags($order)
+    private function getTags(OrderInterface $order)
     {
         return [
             '@array' => [
@@ -234,7 +229,8 @@ class InvoiceModifier implements ModifierInterface
                     $this->addCDATA(
                         $this->scopeConfig->getValue(
                             self::INVOICE_TAG_CONFIG_CODE,
-                            ScopeInterface::SCOPE_STORE
+                            ScopeInterface::SCOPE_STORE,
+                            $order->getStoreId()
                         )
                     ),
                 ]
