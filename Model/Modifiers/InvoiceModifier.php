@@ -24,7 +24,8 @@ class InvoiceModifier implements ModifierInterface
     const INVOICE_PAID_REMARK_CONFIG_KEY = 'invoice_options/invoice/paid_remark';
     const INVOICE_REFERENCE_CONFIG_KEY = 'invoice_options/invoice/reference';
     const INVOICE_ACTION_CONFIG_CODE = 'invoice_options/invoice/invoice_action';
-    const INVOICE_LAYOUT_CONFIG_CODE = 'layout/general/layout_code';
+    const INVOICE_LAYOUT_CONFIG_LAYOUT_SELECTOR = 'layout/general/layout_selector';
+    const INVOICE_LAYOUT_CONFIG_LAYOUT_CODE = 'layout/general/layout_code';
     const INVOICE_SAVE_RELATION_CONFIG_CODE = 'invoice_options/invoice/save_relation';
     const CALCULATION_METHOD_CONFIG = 'calculation/general/method';
     const CALCULATION_CUSTOMER_GROUP_RULES = 'calculation/general/customer_group_rules';
@@ -89,7 +90,14 @@ class InvoiceModifier implements ModifierInterface
         $invoice['date'] = $this->addCDATA($order->getCreatedAt());
         $invoice['recurring'] = $this->addCDATA("none");
         $invoice['remark'] = $this->addCDATA($this->getRemark($order, $isPaid));
-        $invoice['layout'] = $this->addCDATA($this->getLayoutCode());
+        $invoice['layout'] = $this->addCDATA($this->getLayoutCode(
+            $this->scopeConfig->getValue(
+                self::INVOICE_LAYOUT_CONFIG_LAYOUT_SELECTOR,
+                ScopeInterface::SCOPE_STORE,
+                $this->getStoreid()
+            ),
+            $order
+        ));
         $invoice['paid'] = $this->getPaid($order, $isPaid);
         $invoice['action'] = $this->addCDATA(
             $this->scopeConfig->getValue(
@@ -156,7 +164,7 @@ class InvoiceModifier implements ModifierInterface
         switch ($configValue) {
             case 'fixed':
                 $layout_code = $this->scopeConfig->getValue(
-                    self::INVOICE_LAYOUT_CONFIG_CODE,
+                    self::INVOICE_LAYOUT_CONFIG_LAYOUT_CODE,
                     ScopeInterface::SCOPE_STORE,
                     $this->getStoreid()
                 );
