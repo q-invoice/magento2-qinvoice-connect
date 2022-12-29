@@ -7,25 +7,24 @@ use Magento\Framework\DataObject;
 use Qinvoice\Connect\Block\Adminhtml\Form\Field\CustomerGroupColumn;
 use Qinvoice\Connect\Block\Adminhtml\Form\Field\MethodColumn;
 
-class DynamicField extends AbstractFieldArray
+class DynamicCustomerGroupLayoutCode extends AbstractFieldArray
 {
     private $groupDropdownRenderer;
-    private $methodDropdownRenderer;
 
     protected function _prepareToRender()
     {
         $this->addColumn(
-            'attribute_name',
+            'customer_group',
             [
                 'label' => __('Customer Group'),
                 'renderer' => $this->getCustomerGroupDropdownRenderer(),
             ]
         );
         $this->addColumn(
-            'dropdown_field',
+            'layout_code',
             [
-                'label' => __('Method'),
-                'renderer' => $this->getMethodDropdownRenderer(),
+                'label' => __('Layout code'),
+                'class' => 'required-entry',
             ]
         );
         $this->_addAfter = false;
@@ -53,14 +52,4 @@ class DynamicField extends AbstractFieldArray
         return $this->groupDropdownRenderer;
     }
 
-    private function getMethodDropdownRenderer()
-    {
-        if (!$this->methodDropdownRenderer) {
-            $this->methodDropdownRenderer = $this->getLayout()->createBlock(
-                MethodColumn::class,
-                '',
-                ['data' => ['is_render_to_js_template' => true]]);
-        }
-        return $this->methodDropdownRenderer;
-    }
 }

@@ -22,7 +22,8 @@ class InvoiceModifier implements ModifierInterface
     const INVOICE_LAYOUT_CONFIG_CODE =  'invoice_options/invoice/layout_code';
     const INVOICE_ACTION_CONFIG_CODE =  'invoice_options/invoice/invoice_action';
     const INVOICE_SAVE_RELATION_CONFIG_CODE =  'invoice_options/invoice/save_relation';
-    const INVOICE_CALCULATION_METHOD_CONFIG_CODE =  'invoice_options/invoice/calculation_method';
+    const CALCULATION_METHOD_CONFIG =  'calculation/general/method';
+    const CALCULATION_CUSTOMER_GROUP_RULES =  'calculation/general/customer_group_rules';
     const INVOICE_TAG_CONFIG_CODE =  'invoice_options/invoice/invoice_tag';
 
     /**
@@ -74,34 +75,52 @@ class InvoiceModifier implements ModifierInterface
             )
         );
 
-        switch($this->addCDATA(
+        $calculation_method = $this->getCalculationMethod(
             $this->scopeConfig->getValue(
-                self::INVOICE_CALCULATION_METHOD_CONFIG_CODE,
+                self::CALCULATION_METHOD_CONFIG,
                 ScopeInterface::SCOPE_STORE
-            )
-        )){
-            case 'incl':
-            case 'excl':
-                $calculation_method = $this->addCDATA(
-                    $this->scopeConfig->getValue(
-                        self::INVOICE_CALCULATION_METHOD_CONFIG_CODE,
-                        ScopeInterface::SCOPE_STORE
-                    )
-                );
-                break;
-            case 'dynamic':
-                if(!is_null($order->getBillingAddress()->getCompany())){
-                    $calculation_method = 'excl';
-                }else{
-                    $calculation_method = 'incl';
-                }
-                break;
-        }
-        $invoice['calculation_method'] = $calculation_method;
+            ), $order);
+
+        $invoice['calculation_method'] = $this->addCDATA($calculation_method);
         $invoice['tags'] = $this->getTags($order);
         $invoice['magento_version'] = $this->getVersion();
 
         return $document->addItem(self::PARENT_NODE, $invoice);
+    }
+
+    private function getCalculationMethod($configValue, OrderInterface $order){
+
+        switch($configValue){
+            case 'incl':
+            case 'excl':
+                return
+                    $this->scopeConfig->getValue(
+                        self::CALCULATION_METHOD_CONFIG,
+                        ScopeInterface::SCOPE_STORE
+                    )
+                ;
+            case 'dynamic':
+                if(!is_null($order->getBillingAddress()->getCompany())){
+                    return 'excl';
+                }else{
+                    return 'incl';
+                }
+            case 'customer_groups':
+                // get customer group
+                $customerGroup = $order->getCustomerGroupId();
+
+                dump($customerGroup);
+
+                // get value for customer group
+                $configValues = $this->scopeConfig->getValue(
+                    self::CALCULATION_CUSTOMER_GROUP_RULES,
+                    ScopeInterface::SCOPE_STORE
+                );
+
+                dd($configValues);
+
+                return $this->getCalculationMethod($configValue, $order);
+        }
     }
 
     private function getRemark($order, $isPaid)

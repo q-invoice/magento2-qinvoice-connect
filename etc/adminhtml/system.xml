@@ -47,11 +47,7 @@
                     <label>Document reference</label>
                     <comment><![CDATA[e.g. {order_id}.]]></comment>
                 </field>
-                <field id="layout_code" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1"
-                       showInStore="1">
-                    <label>Layout Code</label>
-                    <comment><![CDATA[Optional]]></comment>
-                </field>
+
                 <field id="invoice_remark" translate="label" type="textarea" sortOrder="40" showInDefault="1"
                        showInWebsite="1" showInStore="1">
                     <label>Invoice remark</label>
@@ -121,6 +117,44 @@
             </group>
         </section>
 
+        <section id="layout" translate="label" type="text" sortOrder="100" showInDefault="1"
+                 showInWebsite="1" showInStore="1">
+            <label>Layout</label>
+            <tab>qinvoice</tab>
+            <resource>Qinvoice_Connect::config</resource>
+            <group id="general" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>Layout</label>
+                <field id="layout_selector" translate="label" type="select" sortOrder="110" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
+                    <label>Method</label>
+                    <source_model>\Qinvoice\Connect\Model\Config\Source\LayoutSelector</source_model>
+                    <comment><![CDATA[Select an option]]></comment>
+                </field>
+
+                <field id="customer_group_rules" translate="label" sortOrder="112" showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
+                    <label>Rules</label>
+                    <backend_model>\Qinvoice\Connect\Block\Adminhtml\Config\Backend\ArraySerialized</backend_model>
+                    <frontend_model>\Qinvoice\Connect\Block\Adminhtml\DynamicCustomerGroupLayoutCode</frontend_model>
+                    <depends>
+                        <field id="layout_selector">customer_groups</field>
+                    </depends>
+                </field>
+
+                <field id="layout_code" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Layout Code</label>
+                    <comment><![CDATA[Optional]]></comment>
+                    <depends>
+                        <field id="layout_selector">fixed</field>
+                    </depends>
+                </field>
+
+            </group>
+        </section>
+
 
         <section id="calculation" translate="label" type="text" sortOrder="100" showInDefault="1"
                  showInWebsite="1" showInStore="1">
@@ -130,21 +164,21 @@
             <group id="general" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1"
                    showInStore="1">
                 <label>Calculation</label>
-                <field id="calculation_method" translate="label" type="select" sortOrder="110" showInDefault="1"
+                <field id="method" translate="label" type="select" sortOrder="110" showInDefault="1"
                        showInWebsite="1" showInStore="1">
-                    <label>Calculation method</label>
-                    <source_model>\Qinvoice\Connect\Model\Config\Source\Method</source_model>
-                    <comment><![CDATA[Select leading price type]]></comment>
+                    <label>Method</label>
+                    <source_model>\Qinvoice\Connect\Model\Config\Source\MethodSelector</source_model>
+                    <comment><![CDATA[Select an option]]></comment>
                 </field>
 
-                <field id="customer_group_calculation_method" translate="label" sortOrder="112" showInDefault="1"
+                <field id="customer_group_rules" translate="label" sortOrder="112" showInDefault="1"
                        showInWebsite="1"
                        showInStore="1">
-                    <label>Calculation method</label>
+                    <label>Rules</label>
                     <backend_model>\Qinvoice\Connect\Block\Adminhtml\Config\Backend\ArraySerialized</backend_model>
-                    <frontend_model>\Qinvoice\Connect\Block\Adminhtml\DynamicField</frontend_model>
+                    <frontend_model>\Qinvoice\Connect\Block\Adminhtml\DynamicCustomerGroupCalculationMethod</frontend_model>
                     <depends>
-                        <field id="calculation_method">customer_groups</field>
+                        <field id="method">customer_groups</field>
                     </depends>
                 </field>
 

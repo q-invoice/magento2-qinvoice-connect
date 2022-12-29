@@ -7,7 +7,7 @@ namespace Qinvoice\Connect\Model\Config\Source;
 
 use Magento\Framework\Data\OptionSourceInterface;
 
-class Method implements OptionSourceInterface
+class MethodSelector implements OptionSourceInterface
 {
     public function toOptionArray()
     {
