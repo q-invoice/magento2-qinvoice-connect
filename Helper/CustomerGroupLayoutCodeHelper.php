@@ -33,15 +33,19 @@ class CustomerGroupLayoutCodeHelper extends \Magento\Framework\App\Helper\Abstra
     {
         $groupRules = $this->scopeConfig->getValue(self::LAYOUT_CUSTOMER_GROUP_RULES, ScopeInterface::SCOPE_STORE, $this->getStoreid());
 
+        var_dump($groupRules);
         if ($groupRules == '' || $groupRules == null)
             return;
 
         $unserializedata = $this->serialize->unserialize($groupRules);
 
+        var_dump($unserializedata);
         $groupRulesArray = array();
         foreach ($unserializedata as $key => $row) {
             $groupRulesArray[$row['customer_group_id']] = $row['layout_code'];
         }
+
+        var_dump($groupRulesArray);
 
         return $groupRulesArray;
     }
