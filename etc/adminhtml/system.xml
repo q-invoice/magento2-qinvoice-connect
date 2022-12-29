@@ -125,7 +125,7 @@
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
                    showInStore="1">
                 <label>Layout</label>
-                <field id="layout_selector" translate="label" type="select" sortOrder="110" showInDefault="1"
+                <field id="layout_selector" translate="label" type="select" sortOrder="10" showInDefault="1"
                        showInWebsite="1" showInStore="1">
                     <label>Method</label>
                     <source_model>\Qinvoice\Connect\Model\Config\Source\LayoutSelector</source_model>

@@ -50,6 +50,7 @@ class CustomerGroupCalculationMethodHelper extends \Magento\Framework\App\Helper
     {
         var_dump($customerGroupId);
         $groupRulesArray = $this->getCustomerGroupRules();
-        return isset($groupRulesArray[$customerGroupId]) ? $groupRulesArray[$customerGroupId] : null;
+        var_dump($groupRulesArray);
+        return isset($groupRulesArray[$customerGroupId]) ? $groupRulesArray[$customerGroupId] : 'xxxx';
     }
 }

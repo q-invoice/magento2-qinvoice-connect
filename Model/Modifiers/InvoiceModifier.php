@@ -124,8 +124,6 @@ class InvoiceModifier implements ModifierInterface
         $invoice['tags'] = $this->getTags($order);
         $invoice['magento_version'] = $this->getVersion();
 
-        var_dump($invoice);
-        die();
 
         return $document->addItem(self::PARENT_NODE, $invoice);
     }

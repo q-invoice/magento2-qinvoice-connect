@@ -49,6 +49,6 @@ class CustomerGroupLayoutCodeHelper extends \Magento\Framework\App\Helper\Abstra
     public function getLayoutCodeForCustomerGroup($customerGroupId)
     {
         $groupRulesArray = $this->getCustomerGroupRules();
-        return isset($groupRulesArray[$customerGroupId]) ? $groupRulesArray[$customerGroupId] : null;
+        return isset($groupRulesArray[$customerGroupId]) ? $groupRulesArray[$customerGroupId] : '00000';
     }
 }
