@@ -12,19 +12,23 @@ use Magento\Store\Model\ScopeInterface;
 use Qinvoice\Connect\Api\ModifierInterface;
 use Qinvoice\Connect\Model\Document;
 
+use Qinvoice\Connect\Helper\CustomerGroupCalculationMethodHelper;
+use Qinvoice\Connect\Helper\CustomerGroupLayoutCodeHelper;
+
 class InvoiceModifier implements ModifierInterface
 {
     use AddCdata;
+
     const PARENT_NODE = "invoice";
-    const INVOICE_REMARK_CONFIG_KEY =  'invoice_options/invoice/invoice_remark';
-    const INVOICE_PAID_REMARK_CONFIG_KEY =  'invoice_options/invoice/paid_remark';
-    const INVOICE_REFERENCE_CONFIG_KEY =  'invoice_options/invoice/reference';
-    const INVOICE_LAYOUT_CONFIG_CODE =  'invoice_options/invoice/layout_code';
-    const INVOICE_ACTION_CONFIG_CODE =  'invoice_options/invoice/invoice_action';
-    const INVOICE_SAVE_RELATION_CONFIG_CODE =  'invoice_options/invoice/save_relation';
-    const CALCULATION_METHOD_CONFIG =  'calculation/general/method';
-    const CALCULATION_CUSTOMER_GROUP_RULES =  'calculation/general/customer_group_rules';
-    const INVOICE_TAG_CONFIG_CODE =  'invoice_options/invoice/invoice_tag';
+    const INVOICE_REMARK_CONFIG_KEY = 'invoice_options/invoice/invoice_remark';
+    const INVOICE_PAID_REMARK_CONFIG_KEY = 'invoice_options/invoice/paid_remark';
+    const INVOICE_REFERENCE_CONFIG_KEY = 'invoice_options/invoice/reference';
+    const INVOICE_ACTION_CONFIG_CODE = 'invoice_options/invoice/invoice_action';
+    const INVOICE_LAYOUT_CONFIG_CODE = 'layout/general/layout_code';
+    const INVOICE_SAVE_RELATION_CONFIG_CODE = 'invoice_options/invoice/save_relation';
+    const CALCULATION_METHOD_CONFIG = 'calculation/general/method';
+    const CALCULATION_CUSTOMER_GROUP_RULES = 'calculation/general/customer_group_rules';
+    const INVOICE_TAG_CONFIG_CODE = 'invoice_options/invoice/invoice_tag';
 
     /**
      * @var ScopeConfigInterface
@@ -34,6 +38,16 @@ class InvoiceModifier implements ModifierInterface
      * @var ProductMetadataInterface
      */
     private $productMetadata;
+    private \Psr\Log\LoggerInterface $logger;
+    private \Magento\Store\Model\StoreManagerInterface $storeManager;
+    /**
+     * @var CustomerGroupLayoutCodeHelper
+     */
+    private CustomerGroupLayoutCodeHelper $customerGroupLayoutCodeHelper;
+    /**
+     * @var CustomerGroupCalculationMethodHelper
+     */
+    private CustomerGroupCalculationMethodHelper $customerGroupCalculationMethodHelper;
 
     /**
      * LoginModifier constructor.
@@ -42,11 +56,26 @@ class InvoiceModifier implements ModifierInterface
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        ProductMetadataInterface $productMetadata
-    ) {
+        ProductMetadataInterface $productMetadata,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Psr\Log\LoggerInterface $logger,
+        CustomerGroupLayoutCodeHelper $customerGroupLayoutCodeHelper,
+        CustomerGroupCalculationMethodHelper $customerGroupCalculationMethodHelper
+    )
+    {
         $this->scopeConfig = $scopeConfig;
         $this->productMetadata = $productMetadata;
+        $this->logger = $logger;
+        $this->storeManager = $storeManager;
+        $this->customerGroupLayoutCodeHelper = $customerGroupLayoutCodeHelper;
+        $this->customerGroupCalculationMethodHelper = $customerGroupCalculationMethodHelper;
     }
+
+    public function getStoreid()
+    {
+        return $this->storeManager->getStore()->getId();
+    }
+
     /**
      * @param Document $document
      * @param OrderInterface $order
@@ -60,25 +89,28 @@ class InvoiceModifier implements ModifierInterface
         $invoice['date'] = $this->addCDATA($order->getCreatedAt());
         $invoice['recurring'] = $this->addCDATA("none");
         $invoice['remark'] = $this->addCDATA($this->getRemark($order, $isPaid));
-        $invoice['layout'] = $this->addCDATA($this->getLayout());
+        $invoice['layout'] = $this->addCDATA($this->getLayoutCode());
         $invoice['paid'] = $this->getPaid($order, $isPaid);
         $invoice['action'] = $this->addCDATA(
             $this->scopeConfig->getValue(
                 self::INVOICE_ACTION_CONFIG_CODE,
-                ScopeInterface::SCOPE_STORE
+                ScopeInterface::SCOPE_STORE,
+                $this->getStoreid()
             )
         );
         $invoice['saverelation'] = $this->addCDATA(
             $this->scopeConfig->getValue(
                 self::INVOICE_SAVE_RELATION_CONFIG_CODE,
-                ScopeInterface::SCOPE_STORE
+                ScopeInterface::SCOPE_STORE,
+                $this->getStoreid()
             )
         );
 
         $calculation_method = $this->getCalculationMethod(
             $this->scopeConfig->getValue(
                 self::CALCULATION_METHOD_CONFIG,
-                ScopeInterface::SCOPE_STORE
+                ScopeInterface::SCOPE_STORE,
+                $this->getStoreid()
             ), $order);
 
         $invoice['calculation_method'] = $this->addCDATA($calculation_method);
@@ -88,38 +120,57 @@ class InvoiceModifier implements ModifierInterface
         return $document->addItem(self::PARENT_NODE, $invoice);
     }
 
-    private function getCalculationMethod($configValue, OrderInterface $order){
+    private function getCalculationMethod($configValue, OrderInterface $order)
+    {
 
-        switch($configValue){
+        $this->logger->debug(sprintf("Getting calculation method, value is %s.", $configValue));
+
+        switch ($configValue) {
             case 'incl':
+                return 'incl';
             case 'excl':
-                return
-                    $this->scopeConfig->getValue(
-                        self::CALCULATION_METHOD_CONFIG,
-                        ScopeInterface::SCOPE_STORE
-                    )
-                ;
+                return 'excl';
             case 'dynamic':
-                if(!is_null($order->getBillingAddress()->getCompany())){
+                if (!is_null($order->getBillingAddress()->getCompany())) {
                     return 'excl';
-                }else{
+                } else {
                     return 'incl';
                 }
             case 'customer_groups':
                 // get customer group
-                $customerGroup = $order->getCustomerGroupId();
+                $customerGroupId = $order->getCustomerGroupId();
 
-                dump($customerGroup);
+                $this->logger->debug(sprintf("Looking up method based on groups for group %s.", $customerGroupId));
 
-                // get value for customer group
-                $configValues = $this->scopeConfig->getValue(
-                    self::CALCULATION_CUSTOMER_GROUP_RULES,
-                    ScopeInterface::SCOPE_STORE
-                );
-
-                dd($configValues);
+                $configValue = $this->customerGroupCalculationMethodHelper->getCalculationMethodForCustomerGroup($customerGroupId);
 
                 return $this->getCalculationMethod($configValue, $order);
+        }
+    }
+
+    private function getLayoutCode($configValue, OrderInterface $order)
+    {
+
+        $this->logger->debug(sprintf("Getting layout code, value is %s.", $configValue));
+
+        switch ($configValue) {
+            case 'fixed':
+                $layout_code = $this->scopeConfig->getValue(
+                    self::INVOICE_LAYOUT_CONFIG_CODE,
+                    ScopeInterface::SCOPE_STORE,
+                    $this->getStoreid()
+                );
+
+                return $layout_code;
+
+            case 'customer_groups':
+                // get customer group
+                $customerGroupId = $order->getCustomerGroupId();
+
+                $this->logger->debug(sprintf("Looking up layout based on groups for group %s.", $customerGroupId));
+
+                return $this->customerGroupLayoutCodeHelper->getLayoutCodeForCustomerGroup($customerGroupId);
+
         }
     }
 
@@ -129,6 +180,10 @@ class InvoiceModifier implements ModifierInterface
             self::INVOICE_REMARK_CONFIG_KEY,
             ScopeInterface::SCOPE_STORE
         );
+
+        if (is_null($document_remark)) {
+            $document_remark = '';
+        }
 
         $document_remark = str_replace('{order_id}', $order->getIncrementId(), $document_remark);
 
@@ -154,17 +209,6 @@ class InvoiceModifier implements ModifierInterface
 
         return $reference;
     }
-
-    private function getLayout()
-    {
-        $layout_code = $this->scopeConfig->getValue(
-            self::INVOICE_LAYOUT_CONFIG_CODE,
-            ScopeInterface::SCOPE_STORE
-        );
-
-        return isset($layout_code) ? $layout_code : '';
-    }
-
 
 
     private function getPaid($order, $isPaid)

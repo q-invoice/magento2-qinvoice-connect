@@ -14,7 +14,7 @@ class DynamicCustomerGroupLayoutCode extends AbstractFieldArray
     protected function _prepareToRender()
     {
         $this->addColumn(
-            'customer_group',
+            'customer_group_id',
             [
                 'label' => __('Customer Group'),
                 'renderer' => $this->getCustomerGroupDropdownRenderer(),
