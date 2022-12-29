@@ -72,7 +72,7 @@ class InvoiceModifier implements ModifierInterface
         $this->customerGroupCalculationMethodHelper = $customerGroupCalculationMethodHelper;
     }
 
-    public function getStoreid()
+    public function getStoreId()
     {
         return $this->storeManager->getStore()->getId();
     }
@@ -94,23 +94,22 @@ class InvoiceModifier implements ModifierInterface
             $this->scopeConfig->getValue(
                 self::INVOICE_LAYOUT_CONFIG_LAYOUT_SELECTOR,
                 ScopeInterface::SCOPE_STORE,
-                $this->getStoreid()
-            ),
-            $order
-        ));
+                $this->getStoreId()
+            ), $order)
+        );
         $invoice['paid'] = $this->getPaid($order, $isPaid);
         $invoice['action'] = $this->addCDATA(
             $this->scopeConfig->getValue(
                 self::INVOICE_ACTION_CONFIG_CODE,
                 ScopeInterface::SCOPE_STORE,
-                $this->getStoreid()
+                $this->getStoreId()
             )
         );
         $invoice['saverelation'] = $this->addCDATA(
             $this->scopeConfig->getValue(
                 self::INVOICE_SAVE_RELATION_CONFIG_CODE,
                 ScopeInterface::SCOPE_STORE,
-                $this->getStoreid()
+                $this->getStoreId()
             )
         );
 
@@ -118,20 +117,21 @@ class InvoiceModifier implements ModifierInterface
             $this->scopeConfig->getValue(
                 self::CALCULATION_METHOD_CONFIG,
                 ScopeInterface::SCOPE_STORE,
-                $this->getStoreid()
+                $this->getStoreId()
             ), $order);
 
         $invoice['calculation_method'] = $this->addCDATA($calculation_method);
         $invoice['tags'] = $this->getTags($order);
         $invoice['magento_version'] = $this->getVersion();
 
+        var_dump($invoice);
+        die();
+
         return $document->addItem(self::PARENT_NODE, $invoice);
     }
 
     private function getCalculationMethod($configValue, OrderInterface $order)
     {
-
-        $this->logger->debug(sprintf("Getting calculation method, value is %s.", $configValue));
 
         switch ($configValue) {
             case 'incl':
@@ -147,9 +147,6 @@ class InvoiceModifier implements ModifierInterface
             case 'customer_groups':
                 // get customer group
                 $customerGroupId = $order->getCustomerGroupId();
-
-                $this->logger->debug(sprintf("Looking up method based on groups for group %s.", $customerGroupId));
-
                 $configValue = $this->customerGroupCalculationMethodHelper->getCalculationMethodForCustomerGroup($customerGroupId);
 
                 return $this->getCalculationMethod($configValue, $order);
@@ -159,14 +156,12 @@ class InvoiceModifier implements ModifierInterface
     private function getLayoutCode($configValue, OrderInterface $order)
     {
 
-        $this->logger->debug(sprintf("Getting layout code, value is %s.", $configValue));
-
         switch ($configValue) {
             case 'fixed':
                 $layout_code = $this->scopeConfig->getValue(
                     self::INVOICE_LAYOUT_CONFIG_LAYOUT_CODE,
                     ScopeInterface::SCOPE_STORE,
-                    $this->getStoreid()
+                    $this->getStoreId()
                 );
 
                 return $layout_code;
@@ -174,9 +169,6 @@ class InvoiceModifier implements ModifierInterface
             case 'customer_groups':
                 // get customer group
                 $customerGroupId = $order->getCustomerGroupId();
-
-                $this->logger->debug(sprintf("Looking up layout based on groups for group %s.", $customerGroupId));
-
                 return $this->customerGroupLayoutCodeHelper->getLayoutCodeForCustomerGroup($customerGroupId);
 
         }
