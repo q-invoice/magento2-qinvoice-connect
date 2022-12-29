@@ -40,7 +40,7 @@ class CustomerGroupLayoutCodeHelper extends \Magento\Framework\App\Helper\Abstra
 
         $groupRulesArray = array();
         foreach ($unserializedata as $key => $row) {
-            $groupRulesArray[$row['customer_group_id']] = $row['layout_id'];
+            $groupRulesArray[$row['customer_group_id']] = $row['layout_code'];
         }
 
         return $groupRulesArray;
