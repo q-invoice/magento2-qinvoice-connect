@@ -27,8 +27,12 @@ class ShippingModifier implements ModifierInterface
     public function modify(Document $document, OrderInterface $order, $isPaid = false)
     {
         $invoice = $document->getItem(self::PARENT_NODE);
+        $description = $order->getShippingDescription();
+        if(is_null($description)){
+            $description = '';
+        }
         $invoice['shipping']['method'] = [
-            '@value' => $this->addCDATA(trim($order->getShippingDescription())),
+            '@value' => $this->addCDATA(trim($description)),
             '@attributes' => [
                 'id' => $order->getShippingMethod(),
             ],
