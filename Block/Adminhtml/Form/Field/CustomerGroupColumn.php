@@ -2,7 +2,6 @@
 
 namespace Qinvoice\Connect\Block\Adminhtml\Form\Field;
 
-use Magento\Customer\Model\Customer\Source\GroupSourceInterface;
 use Magento\Framework\View\Element\Html\Select;
 
 use Magento\Customer\Model\ResourceModel\Group\Collection;
@@ -14,10 +13,10 @@ class CustomerGroupColumn extends Select
 {
     protected $groupdata;
 
-    public function __construct(Context $context, GroupSourceInterface $groupdata = null, array $data = [])
+    public function __construct(Context $context, GroupSourceLoggedInOnlyInterface $groupdata = null, array $data = [])
     {
         $this->groupdata = $groupdata
-            ?: ObjectManager::getInstance()->get(GroupSourceInterface::class);
+            ?: ObjectManager::getInstance()->get(GroupSourceLoggedInOnlyInterface::class);
         parent::__construct($context, $data);
     }
 
@@ -41,7 +40,7 @@ class CustomerGroupColumn extends Select
 
     private function getSourceOptions()
     {
-        $customerGroups = $this->groupdata->toOptionArray();
+        $customerGroups = array_merge(array("0" => "Not logged in"), $this->groupdata->toOptionArray());
         return $customerGroups;
     }
 }

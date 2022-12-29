@@ -48,6 +48,9 @@ class CustomerGroupCalculationMethodHelper extends \Magento\Framework\App\Helper
 
     public function getCalculationMethodForCustomerGroup($customerGroupId)
     {
+        if(is_null($customerGroupId)){
+            $customerGroupId = 0;
+        }
         $groupRulesArray = $this->getCustomerGroupRules();
         return isset($groupRulesArray[$customerGroupId]) ? $groupRulesArray[$customerGroupId] : null;
     }
