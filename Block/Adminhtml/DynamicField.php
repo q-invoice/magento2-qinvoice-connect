@@ -39,7 +39,7 @@ class DynamicField extends AbstractFieldArray
         if ($dropdownField !== null) {
             $options['option_' . $this->getCustomerGroupDropdownRenderer()->calcOptionHash($dropdownField)] = 'selected="selected"';
         }
-        $row->setData('attributes', $options);
+        $row->setData('option_extra_attrs', $options);
     }
 
     private function getCustomerGroupDropdownRenderer()

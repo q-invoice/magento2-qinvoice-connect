@@ -129,7 +129,7 @@
             <resource>Qinvoice_Connect::config</resource>
             <group id="general" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1"
                    showInStore="1">
-                <label>API</label>
+                <label>Calculation</label>
                 <field id="calculation_method" translate="label" type="select" sortOrder="110" showInDefault="1"
                        showInWebsite="1" showInStore="1">
                     <label>Calculation method</label>
