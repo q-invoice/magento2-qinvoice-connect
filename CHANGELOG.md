@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.6.2] - 2023-01-11
+### Fixed
+- Admin HTML XML file
+
+## [2.6.1] - 2022-12-29
+### Fixed
+- Cleaned up code
+
 ## [2.6.0] - 2022-12-29
 ### Added
 - Dynamic fields for calculation_method
