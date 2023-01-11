@@ -43,14 +43,14 @@ class InvoiceModifier implements ModifierInterface
     /**
      * @var CustomerGroupLayoutCodeHelper
      */
-    private CustomerGroupLayoutCodeHelper $customerGroupLayoutCodeHelper;
+    private $customerGroupLayoutCodeHelper;
     /**
      * @var CustomerGroupCalculationMethodHelper
      */
-    private CustomerGroupCalculationMethodHelper $customerGroupCalculationMethodHelper;
+    private $customerGroupCalculationMethodHelper;
 
 
-    private DebugService $debugService;
+    private $debugService;
 
     /**
      * LoginModifier constructor.
@@ -152,6 +152,7 @@ class InvoiceModifier implements ModifierInterface
     {
 
         switch ($configValue) {
+            default:
             case 'fixed':
                 $layout_code = $this->scopeConfig->getValue(
                     self::INVOICE_LAYOUT_CONFIG_LAYOUT_CODE,
