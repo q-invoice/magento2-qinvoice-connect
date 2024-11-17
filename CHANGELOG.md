@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.6.3] - 2024-11-17
+### Fixed
+- XML encoding
+
 ## [2.6.2] - 2023-01-11
 ### Fixed
 - Admin HTML XML file

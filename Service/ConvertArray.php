@@ -65,7 +65,7 @@ XML;
                         );
                     }
                     $hasStringKey = true;
-                    $xml->addChild($key, htmlspecialchars($value));
+                    $xml->addChild($key, htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
                 } elseif (is_int($key)) {
                     $hasNumericKey = true;
                     $xml->addChild($key, $value);

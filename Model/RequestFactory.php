@@ -54,6 +54,6 @@ class RequestFactory
             $modifier->modify($qInvoice, $order, $isPaid);
         }
         $xml = $this->convertArray->assocToXml($qInvoice->getItems(), $qInvoice::ROOT_NAME);
-        return htmlspecialchars_decode($xml->asXML());
+        return $xml->asXML();
     }
 }
